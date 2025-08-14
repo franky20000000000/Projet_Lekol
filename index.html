@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lekol</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!------------------------------------ entete ------------------------------------>
+    <header class="fixed flex md:justify-around z-50 10 items-center p-4 shadow-[0_0.5px_6px_rgba(0,0,0,0.1)] w-full text-xl">
+        <div>
+            <p class="text-[#2B80F6] font-bold text-3xl">Lékol</p>
+        </div>
+        <div class="md:flex gap-5 hidden">
+            <a class="transition-all duration-300 ease-in-out" href="">Accueil</a>
+            <a class="transition-all duration-300 ease-in-out" href="">A Propos</a>
+            <a class="transition-all duration-300 ease-in-out" href="">Répétiteurs</a>
+            <a class="transition-all duration-300 ease-in-out" href="">Anciens sujets</a>
+            <a class="transition-all duration-300 ease-in-out" href="">Contact</a>
+        </div>
+        <div>
+            <button class="bg-[#2B80F6] p-2 px-5 rounded-lg text-white hidden md:block">S'inscrire</button>
+        </div>
+    </header>
+
+    <!---------------------------------- section1 --------------------------------------->
+    <section class="flex flex-col md:flex-row ml-20 mr-20 pt-10 mb-[60px] items-center justify-between">
+        <div class="relative -top-[20px] mb-[-40px]">
+            <h1 class="font-bold md:text-6xl mt-20 text-3xl mb-10">Répétiteurs à <br> portée de clic </h1>
+            <p class="md:text-xl text-justify mt-10"> <span class="text-[#2B80F6]">Lékol</span> est une plateforme qui connecte les <br>
+                parents d’élèves et étudiants pour un <br>
+                accompagnement scolaire personnalisé.</p>
+            <button class="bg-[#2B80F6] p-2 rounded-lg text-white md:mt-20 mt-5 text-xl px-5">Je m'inscris</button>
+        </div>
+        <div class="md:w-1/2 mt-10">
+            <img src="Images/undraw_educator_6dgp.png" alt="">
+        </div>
+    </section>
+
+    <!------------------------------- section 2 ------------------------------------------->
+    <section class="bg-gray-200 w-[85%] md:h-[250px] m-auto rounded-lg mb-[60px]">
+
+        <h1 class="text-3xl relative font-bold top-7 left-9">NOTRE IMPACT EN CHIFFRE</h1>
+        <p class="relative top-8 md:left-10 left-3 md:w-max">Depuis notre lancement, Lékol transforme l'éducation au Cameroun en facilitant l'accès
+             à un soutien scolaire de qualité pour tous.</p>
+
+        <div class="flex md:flex-row gap-4 flex-col justify-around mt-[80px]">
+            <div class="justify-center items-center flex flex-col">
+                <p>Repetiteurs inscrits</p>
+                <span id="repetiteur" class="font-bold text-6xl text-[#2B80F6]"></span>
+            </div>
+            <div class="justify-center items-center flex flex-col">
+                <p>Eleves accompagnes</p>
+                <span id="eleves" class="font-bold text-6xl text-[#2B80F6]"> </span>
+            </div>
+            <div class="justify-center items-center flex flex-col">
+                <p>Taux de reussite</p>
+                <span id="taux" class="font-bold text-6xl text-[#2B80F6]"></span>
+            </div>
+            <div class="justify-center items-center flex flex-col">
+                <p >Villes couvertes</p>
+                <span id="villes" class="font-bold text-6xl text-[#2B80F6]"></span>
+            </div>
+        </div>
+    </section>
+
+    <!------------------------------- section 3 ------------------------------------------->
+    <section class="flex mr-20 ml-20 justify-between items-center flex-col md:flex-row">
+        <div class="md:w-1/2">
+            <img src="Images/undraw_online-test_20lm.png" alt="">
+        </div>
+        <div class="md:text-end">
+            <h1 class="md:text-6xl text-3xl font-bold mb-5">Comment ca marche ?</h1>
+            <p class="md:text-xl">Inscrivez-vous gratuitement <br>
+                Trouvez un répétiteur pres de chez vous <br>
+                Contactez-le en un clic (par appel ou via WhatsApp)
+            </p>
+            <button class="bg-[#2B80F6] p-2 rounded-lg text-white md:mt-20 mt-5 text-xl px-5 ">Voir plus</button>
+        </div>      
+    </section>
+
+    <!------------------------------- section 4 ------------------------------------------->
+    <section>
+        
+    </section>
+
+
+
+
+    <script src="Scripts/tailwindcss.js">    
+    </script>
+    <script src="Scripts/script.js"></script>
+</body>
+</html>

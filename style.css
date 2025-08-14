@@ -1,0 +1,26 @@
+/* Police normale */
+@font-face {
+  font-family: 'Poppins';
+  src: url('Polices/Poppins-Regular.ttf') format('ttf');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Police en gras */
+@font-face {
+  font-family: 'Poppins Bold';
+  src: url('Polices/Poppins-Bold.ttf') format('ttf');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+    font-family: 'Poppins';
+}
+
+a:hover {
+    color: #2B80F6;
+    cursor: pointer;
+}
