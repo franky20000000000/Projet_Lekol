@@ -8,7 +8,7 @@
 </head>
 <body>
     <!------------------------------------ entete ------------------------------------>
-    <header class="fixed flex md:justify-around z-50 10 items-center p-4 shadow-[0_0.5px_6px_rgba(0,0,0,0.1)] w-full text-xl">
+    <header id="navbar" class="fixed flex md:justify-around z-50 10 items-center p-4 shadow-[0_0.5px_6px_rgba(0,0,0,0.1)] w-full text-xl">
         <div>
             <p class="text-[#2B80F6] font-bold text-3xl">Lékol</p>
         </div>
@@ -41,49 +41,326 @@
     <!------------------------------- section 2 ------------------------------------------->
     <section class="bg-gray-200 w-[85%] md:h-[250px] m-auto rounded-lg mb-[60px]">
 
-        <h1 class="text-3xl relative font-bold top-7 left-9">NOTRE IMPACT EN CHIFFRE</h1>
-        <p class="relative top-8 md:left-10 left-3 md:w-max">Depuis notre lancement, Lékol transforme l'éducation au Cameroun en facilitant l'accès
-             à un soutien scolaire de qualité pour tous.</p>
+            <h1 class="text-3xl relative font-bold top-7 left-9">NOTRE IMPACT EN CHIFFRE</h1>
+            <p class="relative top-8 md:left-10 left-3 md:w-max">Depuis notre lancement, Lékol transforme l'éducation au Cameroun en facilitant l'accès
+                à un soutien scolaire de qualité pour tous.</p>
 
-        <div class="flex md:flex-row gap-4 flex-col justify-around mt-[80px]">
-            <div class="justify-center items-center flex flex-col">
-                <p>Repetiteurs inscrits</p>
-                <span id="repetiteur" class="font-bold text-6xl text-[#2B80F6]"></span>
+            <div class="flex md:flex-row gap-4 flex-col justify-around mt-[80px]">
+                <div class="justify-center items-center flex flex-col">
+                    <p>Repetiteurs inscrits</p>
+                    <span id="repetiteur" class="font-bold text-6xl text-[#2B80F6]"></span>
+                </div>
+                <div class="justify-center items-center flex flex-col">
+                    <p>Eleves accompagnes</p>
+                    <span id="eleves" class="font-bold text-6xl text-[#2B80F6]"> </span>
+                </div>
+                <div class="justify-center items-center flex flex-col">
+                    <p>Taux de reussite</p>
+                    <span id="taux" class="font-bold text-6xl text-[#2B80F6]"></span>
+                </div>
+                <div class="justify-center items-center flex flex-col">
+                    <p >Villes couvertes</p>
+                    <span id="villes" class="font-bold text-6xl text-[#2B80F6]"></span>
+                </div>
             </div>
-            <div class="justify-center items-center flex flex-col">
-                <p>Eleves accompagnes</p>
-                <span id="eleves" class="font-bold text-6xl text-[#2B80F6]"> </span>
-            </div>
-            <div class="justify-center items-center flex flex-col">
-                <p>Taux de reussite</p>
-                <span id="taux" class="font-bold text-6xl text-[#2B80F6]"></span>
-            </div>
-            <div class="justify-center items-center flex flex-col">
-                <p >Villes couvertes</p>
-                <span id="villes" class="font-bold text-6xl text-[#2B80F6]"></span>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!------------------------------- section 3 ------------------------------------------->
-    <section class="flex mr-20 ml-20 justify-between items-center flex-col md:flex-row">
-        <div class="md:w-1/2">
-            <img src="Images/undraw_online-test_20lm.png" alt="">
-        </div>
-        <div class="md:text-end">
-            <h1 class="md:text-6xl text-3xl font-bold mb-5">Comment ca marche ?</h1>
-            <p class="md:text-xl">Inscrivez-vous gratuitement <br>
-                Trouvez un répétiteur pres de chez vous <br>
-                Contactez-le en un clic (par appel ou via WhatsApp)
+        <!------------------------------- section 3 ------------------------------------------->
+        <section class="flex mr-20 ml-20 justify-between items-center flex-col md:flex-row">
+            <div class="md:w-1/2">
+                <img src="Images/undraw_online-test_20lm.png" alt="">
+            </div>
+            <div class="md:text-end">
+                <h1 class="md:text-6xl text-3xl font-bold mb-5">Comment ca marche ?</h1>
+                <p class="md:text-xl">Inscrivez-vous gratuitement <br>
+                    Trouvez un répétiteur pres de chez vous <br>
+                    Contactez-le en un clic (par appel ou via WhatsApp)
+                </p>
+                <button class="bg-[#2B80F6] p-2 rounded-lg text-white md:mt-20 mt-5 text-xl px-5 ">Voir plus</button>
+            </div>      
+        </section>
+
+        <!------------------------------- section 4 ------------------------------------------->
+        <section class="relative w-full max-w-6xl mx-auto mt-[65px]">
+            <!-- Bouton gauche -->
+    <button type="button" id="carouselPrev"
+            class="absolute -left-8 md:-left-5 top-[195px] -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none select-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+    </button>
+
+    <!-- Fenêtre du carrousel -->
+    <div class="overflow-hidden">
+        <!-- Piste du carrousel (c’est elle qui se déplace) -->
+        <div id="carouselTrack" class="flex transition-transform duration-500 ease-out">
+
+        <!-- ===== Slide 1 ===== -->
+        <div class="shrink-0 w-full grid grid-cols-1 sm:grid-cols-2 gap-6 px-4">
+            <!-- Carte 1 -->
+            <article class="bg-gray-100 rounded-2xl p-6">
+            <div class="flex items-center gap-4">
+                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
+                <img src="https://via.placeholder.com/96" alt="photo profil" class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                <h3 class="text-2xl font-semibold leading-tight">Lamine Yamal</h3>
+                <!-- Étoiles -->
+                <div class="flex items-center gap-1 mt-1">
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
+                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
+                </div>
+                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700 mt-4">
+                Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete
             </p>
-            <button class="bg-[#2B80F6] p-2 rounded-lg text-white md:mt-20 mt-5 text-xl px-5 ">Voir plus</button>
-        </div>      
-    </section>
+            </article>
+            <!-- Carte 2 -->
+            <article class="bg-gray-100 rounded-2xl p-6">
+            <div class="flex items-center gap-4">
+                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
+                <img src="https://via.placeholder.com/96" alt="photo profil" class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                <h3 class="text-2xl font-semibold leading-tight">Lamine Yamal</h3>
+                <div class="flex items-center gap-1 mt-1">
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57..."/></svg>
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57..."/></svg>
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57..."/></svg>
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57..."/></svg>
+                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57..."/></svg>
+                </div>
+                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
+            </article>
+            <!-- Carte 3 -->
+            <article class="bg-gray-100 rounded-2xl p-6">
+            <div class="flex items-center gap-4">
+                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
+                <img src="https://via.placeholder.com/96" alt="photo profil" class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                <h3 class="text-2xl font-semibold leading-tight">Lamine Yamal</h3>
+                <div class="flex items-center gap-1 mt-1">
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57..."/></svg>
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57..."/></svg>
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57..."/></svg>
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57..."/></svg>
+                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57..."/></svg>
+                </div>
+                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
+            </article>
+            <!-- Carte 4 -->
+            <article class="bg-gray-100 rounded-2xl p-6">
+            <div class="flex items-center gap-4">
+                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
+                <img src="https://via.placeholder.com/96" alt="photo profil" class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                <h3 class="text-2xl font-semibold leading-tight">Bryan Ntuchamo</h3>
+                <div class="flex items-center gap-1 mt-1">
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57..."/></svg>
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57..."/></svg>
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57..."/></svg>
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57..."/></svg>
+                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57..."/></svg>
+                </div>
+                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
+            </article>
+        </div>
 
-    <!------------------------------- section 4 ------------------------------------------->
-    <section>
-        
-    </section>
+        <!-- ===== Slide 2 ===== -->
+        <div class="shrink-0 w-full grid grid-cols-1 sm:grid-cols-2 gap-6 px-4">
+            <!-- 4 cartes (duplique/édite le contenu selon tes besoins) -->
+            <article class="bg-gray-100 rounded-2xl p-6">
+            <div class="flex items-center gap-4">
+                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
+                <img src="https://via.placeholder.com/96" alt="" class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                <h3 class="text-2xl font-semibold">Lamine Yamal</h3>
+                <div class="flex items-center gap-1 mt-1">
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg>
+                </div>
+                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
+            </article>
+            <article class="bg-gray-100 rounded-2xl p-6">
+            <div class="flex items-center gap-4">
+                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
+                <img src="https://via.placeholder.com/96" alt="" class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                <h3 class="text-2xl font-semibold">Lamine Yamal</h3>
+                <div class="flex items-center gap-1 mt-1">
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg>
+                </div>
+                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
+            </article>
+            <article class="bg-gray-100 rounded-2xl p-6">
+            <div class="flex items-center gap-4">
+                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
+                <img src="https://via.placeholder.com/96" alt="" class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                <h3 class="text-2xl font-semibold">Lamine Yamal</h3>
+                <div class="flex items-center gap-1 mt-1">
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg>
+                </div>
+                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
+            </article>
+            <article class="bg-gray-100 rounded-2xl p-6">
+            <div class="flex items-center gap-4">
+                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
+                <img src="https://via.placeholder.com/96" alt="" class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                <h3 class="text-2xl font-semibold">Bryan Ntuchamo</h3>
+                <div class="flex items-center gap-1 mt-1">
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg>
+                </div>
+                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
+            </article>
+        </div>
+
+        <!-- ===== Slide 3 ===== -->
+        <div class="shrink-0 w-full grid grid-cols-1 sm:grid-cols-2 gap-6 px-4">
+            <!-- 4 cartes -->
+            <!-- Duplique une des cartes ci-dessus -->
+            <article class="bg-gray-100 rounded-2xl p-6">
+            <div class="flex items-center gap-4">
+                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
+                <img src="https://via.placeholder.com/96" alt="" class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                <h3 class="text-2xl font-semibold">Lamine Yamal</h3>
+                <div class="flex items-center gap-1 mt-1">
+                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg><svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927..."/></svg>
+                </div>
+                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
+            </article>
+            <article class="bg-gray-100 rounded-2xl p-6"><!-- idem --></article>
+            <article class="bg-gray-100 rounded-2xl p-6"><!-- idem --></article>
+            <article class="bg-gray-100 rounded-2xl p-6"><!-- idem --></article>
+        </div>
+
+        <!-- ===== Slide 4 ===== -->
+        <div class="shrink-0 w-full grid grid-cols-1 sm:grid-cols-2 gap-6 px-4">
+            <article class="bg-gray-100 rounded-2xl p-6"><!-- 4 cartes --></article>
+            <article class="bg-gray-100 rounded-2xl p-6"></article>
+            <article class="bg-gray-100 rounded-2xl p-6"></article>
+            <article class="bg-gray-100 rounded-2xl p-6"></article>
+        </div>
+
+        <!-- ===== Slide 5 ===== -->
+        <div class="shrink-0 w-full grid grid-cols-1 sm:grid-cols-2 gap-6 px-4">
+            <article class="bg-gray-100 rounded-2xl p-6"><!-- 4 cartes --></article>
+            <article class="bg-gray-100 rounded-2xl p-6"></article>
+            <article class="bg-gray-100 rounded-2xl p-6"></article>
+            <article class="bg-gray-100 rounded-2xl p-6"></article>
+        </div>
+        </div>
+    </div>
+
+    <!-- Bouton droite -->
+    <button type="button" id="carouselNext"
+            class="absolute -right-8 md:-right-5 top-[195px] -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none select-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+    </button>
+
+    <!-- Indicateurs -->
+    <div id="carouselDots" class="flex justify-center mt-6 gap-2">
+        <button type="button" class="h-3 w-3 rounded-full bg-[#2B80F6]" aria-label="Aller au slide 1"></button>
+        <button type="button" class="h-3 w-3 rounded-full bg-gray-300" aria-label="Aller au slide 2"></button>
+        <button type="button" class="h-3 w-3 rounded-full bg-gray-300" aria-label="Aller au slide 3"></button>
+        <button type="button" class="h-3 w-3 rounded-full bg-gray-300" aria-label="Aller au slide 4"></button>
+        <button type="button" class="h-3 w-3 rounded-full bg-gray-300" aria-label="Aller au slide 5"></button>
+    </div>
+</section>
+
+    <!------------------------------- section 5 ------------------------------------------->
+
+<section class="flex flex-col mt-[65px] items-center">
+    <h1 class="md:text-6xl text-3xl font-bold">Pourquoi nous choisir ?</h1>
+    <div class="mt-10 md:grid grid-cols-3 md:gap-4 flex flex-col gap-4">
+        <div class="h-[15rem] w-[20rem] bg-gray-200 rounded-xl">
+            <img class="absolute mt-5 ml-5 bg-gray-300 p-3 rounded-md" src="Images/map-pin.png" alt="">
+            <div class="relative flex flex-col items-center top-20">
+                <h1 class="text-3xl font-bold/2">Proximite</h1>
+                <p class="relative top-5">Trouvez des répétiteurs près de <br> chez vous .</p>
+            </div>
+        </div>
+
+        <div class="h-[15rem] w-[20rem] bg-gray-200 rounded-xl">
+            <img class="absolute mt-5 ml-5 bg-gray-300 p-3 rounded-md" src="Images/circle-check.png" alt="">
+            <div class="relative flex flex-col items-center top-20">
+                <h1 class="text-3xl font-bold/2">Proximite</h1>
+                <p class="relative top-5">Trouvez des répétiteurs près de <br> chez vous .</p>
+            </div>
+        </div>
+
+        <div class="h-[15rem] w-[20rem] bg-gray-200 rounded-xl">
+            <img class="absolute mt-5 ml-5 bg-gray-300 p-3 rounded-md" src="Images/phone.png" alt="">
+            <div class="relative flex flex-col items-center top-20">
+                <h1 class="text-3xl font-bold/2">Proximite</h1>
+                <p class="relative top-5">Trouvez des répétiteurs près de <br> chez vous .</p>
+            </div>
+        </div>
+
+        <div class="h-[15rem] w-[20rem] bg-gray-200 rounded-xl">
+            <img class="absolute mt-5 ml-5 bg-gray-300 p-3 rounded-md" src="Images/file-text.png" alt="">
+            <div class="relative flex flex-col items-center top-20">
+                <h1 class="text-3xl font-bold/2">Proximite</h1>
+                <p class="relative top-5">Trouvez des répétiteurs près de <br> chez vous .</p>
+            </div>
+        </div>
+
+        <div class="h-[15rem] w-[20rem] bg-gray-200 rounded-xl">
+            <img class="absolute mt-5 ml-5 bg-gray-300 p-3 rounded-md" src="Images/star.png" alt="">
+            <div class="relative flex flex-col items-center top-20">
+                <h1 class="text-3xl font-bold/2">Proximite</h1>
+                <p class="relative top-5">Trouvez des répétiteurs près de <br> chez vous .</p>
+            </div>
+        </div>
+
+        <div class="h-[15rem] w-[20rem] bg-gray-200 rounded-xl">
+            <img class="absolute mt-5 ml-5 bg-gray-300 p-3 rounded-md" src="Images/map-pin.png" alt="">
+            <div class="relative flex flex-col items-center top-20">
+                <h1 class="text-3xl font-bold/2">Proximite</h1>
+                <p class="relative top-5">Trouvez des répétiteurs près de <br> chez vous .</p>
+            </div>
+        </div>
+    </div>
+</section>
 
 
 
