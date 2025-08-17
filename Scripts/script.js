@@ -4,7 +4,8 @@ const taux = document.getElementById('taux');
 const villes = document.getElementById('villes');
 
     
-function incrementNumber(a,b,c) {
+// Fonction pour incrémenter un nombre avec un intervalle
+  function incrementNumber(a,b,c) {
     let repetiteurs=0;
 
     let intRepetiteur= setInterval(() => {      
@@ -16,11 +17,15 @@ function incrementNumber(a,b,c) {
         }
     }, 10);
 }
-
 incrementNumber(repetiteur,100,'+');
 incrementNumber(eleves,150,'+');
 incrementNumber(taux,90,'%');
 incrementNumber(villes,8,'+')
+
+// --- Fin de l'incrémentation des nombres
+
+
+// --- Carousel
 
   const track = document.getElementById('carouselTrack');
   const prevBtn = document.getElementById('carouselPrev');
@@ -53,6 +58,8 @@ incrementNumber(villes,8,'+')
   nextBtn.addEventListener('click', next);
   prevBtn.addEventListener('click', prev);
 
+
+
   // Clic sur les points
   dots.forEach((dot, i) => dot.addEventListener('click', () => { index = i; update(); }));
 
@@ -63,7 +70,35 @@ incrementNumber(villes,8,'+')
 
   update();
 
+
+
+  //pour changer la couleur de la barre de navigation au scroll
   window.addEventListener('scroll', function() {
     const navbar = document.getElementById('navbar');
     navbar.classList.toggle('scrolled', window.scrollY > 100);
   });
+
+
+  // --- Slider de témoignages
+   let testimonialIndex = 0;
+  const testimonialSlides = document.getElementById("testimonialSlides");
+  const testimonialDots = document.querySelectorAll(".testimonial-dot");
+  const totalTestimonialSlides = 5;
+
+  function updateTestimonialSlider() {
+    testimonialSlides.style.transform = `translateX(-${testimonialIndex * 100}%)`;
+    testimonialDots.forEach((dot, idx) => {
+      dot.classList.toggle("bg-blue-500", idx === testimonialIndex);
+      dot.classList.toggle("bg-gray-300", idx !== testimonialIndex);
+    });
+  }
+
+  function moveTestimonial(direction) {
+    testimonialIndex = (testimonialIndex + direction + totalTestimonialSlides) % totalTestimonialSlides;
+    updateTestimonialSlider();
+  }
+
+  // Initial load
+  updateTestimonialSlider();
+
+  //fin de la fonction slider de témoignages
