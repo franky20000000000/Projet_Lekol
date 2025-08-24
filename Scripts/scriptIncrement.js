@@ -23,4 +23,3 @@ incrementNumber(taux,90,'%');
 incrementNumber(villes,8,'+')
 
 // --- Fin de l'incrémentation des nombres
-
