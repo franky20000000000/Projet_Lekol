@@ -6,9 +6,9 @@
     <title>Lekol</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="overflow-x-hidden">
     <!------------------------------------ entete ------------------------------------>
-    <header id="navbar" class="fixed flex md:justify-around z-50 items-center p-4 shadow-[0_0.5px_6px_rgba(0,0,0,0.1)] w-full text-xl">
+    <header id="navbar" class="fixed flex md:justify-around justify-between z-50 items-center p-4 shadow-[0_0.5px_6px_rgba(0,0,0,0.1)] w-full text-xl">
         <div>
             <p class="text-[#2B80F6] font-bold text-3xl">Lékol</p>
         </div>
@@ -26,13 +26,13 @@
 
 
     <!---------------------------------- section1 --------------------------------------->
-    <section class="flex flex-col md:flex-row md:mx-20 pt-10 mb-[60px] items-center justify-between">
-        <div class="relative -top-[20px] mb-[-40px]">
-            <h1 class="font-bold md:text-6xl mt-20 text-4xl mb-10">Répétiteurs à <br> portée de clic </h1>
+    <section class="flex flex-col md:flex-row px-4 md:px-20 md:pt-20 pt-[5rem] mb-16 items-center justify-center justify-between">
+        <div>
+            <h1 class="font-bold md:text-6xl mt-10 text-4xl mb-10">Répétiteurs à <br> portée de clic </h1>
             <p class="md:text-xl text-justify mt-10"> <span class="text-[#2B80F6]">Lékol</span> est une plateforme qui connecte les <br>
                 parents d’élèves et étudiants pour un <br>
                 accompagnement scolaire personnalisé.</p>
-            <button class="bg-[#2B80F6] p-2 rounded-lg text-white md:mt-20 mt-5 text-xl px-5 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-[#2B80F6]-400/50">Je m'inscris</button>
+            <a href="Inscription.html"><button class="bg-[#2B80F6] p-2 rounded-lg text-white md:mt-20 mt-5 text-xl px-5 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-[#2B80F6]-400/50">Je m'inscris</button></a>
         </div>
         <div class="md:w-1/2 mt-10">
             <img src="Images/undraw_educator_6dgp.png" alt="">
@@ -41,8 +41,8 @@
 
 
     <!------------------------------- section 2 ------------------------------------------->
-    <section class="bg-gray-200 w-[85%] md:h-[250px] m-auto h-auto rounded-lg mb-[60px]">
-
+    <section class="w-full px-4">
+        <div class="bg-gray-200 mx-5 md:mx-20 h-auto rounded-lg mb-[60px] flex flex-col">
             <h1 class="text-3xl relative font-bold top-7 left-9">NOTRE IMPACT EN CHIFFRE</h1>
             <p class="relative top-8 md:left-10 mx-3 text-justify md:w-max break-words">Depuis notre lancement, Lékol transforme l'éducation au Cameroun en facilitant l'accès
                 à un soutien scolaire de qualité pour tous.</p>
@@ -65,11 +65,12 @@
                     <span id="villes" class="font-bold text-6xl text-[#2B80F6]"></span>
                 </div>
             </div>
-        </section>
+        </div>        
+    </section>
 
 
         <!------------------------------- section 3 ------------------------------------------->
-        <section class="flex md:mx-20 mx-10 justify-between items-center flex-col md:flex-row">
+        <section class="flex md:mx-20 mx-5 justify-between items-center flex-col md:flex-row ">
             <div class="md:w-1/2">
                 <img src="Images/undraw_online-test_20lm.png" alt="">
             </div>
@@ -85,13 +86,13 @@
 
 
         <!------------------------------- section 4 ------------------------------------------->
-        <section class="relative w-full max-w-6xl mx-auto mt-[65px]">
+        <section class="relative w-full max-w-7xl mx-auto mt-16 px-4">
             <div class="flex w-full justify-end pb-2 font-bold relative right-5">
                 <a href="Repetiteurs.html">Voir Plus ></a>
             </div>
         <!-- Bouton gauche -->
     <button type="button" id="carouselPrev"
-            class="absolute -left-8 md:-left-5 top-[225px] -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none select-none">
+            class="absolute left-1 md:-left-2 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none select-none">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
@@ -343,7 +344,7 @@
 
     <!-- Bouton droite -->
     <button type="button" id="carouselNext"
-            class="absolute -right-2 md:-right-5 top-[225px] hidden md:block -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none select-none">
+            class="absolute right-1 md:-right-2 top-1/2 md:block -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none select-none">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
         </svg>
@@ -360,9 +361,9 @@
 </section>
 
 <!------------------------------- section 5 ------------------------------------------->
-<section class="flex flex-col mt-[65px] items-center">
+<section class="w-full flex flex-col mt-[65px] items-center ">
     <h1 class="md:text-6xl text-3xl font-bold"><span class="text-[#2B80F6]">Pourquoi</span> nous choisir ?</h1>
-    <div class="mt-10 md:grid grid-cols-3 md:gap-4 flex flex-col gap-4">
+    <div class=" mt-10 md:grid grid-cols-3 md:gap-4 flex flex-col gap-4 justify-center items-center mx-5 ">
         <div class="h-[15rem] w-[20rem] bg-gray-200 rounded-xl">
             <img class="absolute mt-5 ml-5 bg-gray-300 p-3 rounded-md" src="Images/map-pin.png" alt="">
             <div class="relative flex flex-col items-center top-20">
@@ -436,7 +437,7 @@
 
 <!------------------------------- section 6 ------------------------------------------->
 <section class="relative w-full flex justify-center items-center py-12 px-4 bg-white">
-  <div class="mr-20 ml-20 w-4xl w-full relative overflow-hidden">
+  <div class="md:mr-20 md:ml-20 mx-4 w-full relative overflow-hidden">
     
     <!-- Slides container -->
     <div id="testimonialSlides" class="flex transition-transform duration-500 ease-in-out">
@@ -581,52 +582,110 @@
 
 
 <!------------------------------- section 7 ------------------------------------------->
-<footer class="w-full md:h-[20rem] bg-black text-white flex flex-col gap-5 md:flex-row justify-around p-10">
-    <div>
-        <p class="text-[#2B80F6] font-bold text-3xl mb-5">Lékol</p>
-         <button class="bg-[#2B80F6] p-2 rounded-md text-white text-xl px-5">Recherche</button>
-    </div>
+<footer class="relative bg-black text-white overflow-hidden min-h-80">  
+        <!-- Contenu principal -->
+        <div class="relative z-10 container mx-auto px-8 py-10">
+            <!-- Section principale -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                
+                <!-- Logo et CTA -->
+                <div class="text-center lg:text-left space-y-8 transform transition-transform duration-300">
+                    <div class="space-y-4">
+                        <h2 class="text-5xl text-[#2B80F6] font-bold">
+                            Lékol
+                        </h2>
+                        <p class="text-slate-300 text-sm leading-relaxed">Votre plateforme d'éducation moderne et innovante</p>
+                    </div>
+                    <button class="hover:to-cyan-600 bg-[#2B80F6] text-white font-bold py-2 px-5 rounded-xl transition-all duration-300 transform hover:scale-110 hover:shadow-md hover:shadow-blue-500/50">
+                        <i class="fas fa-search mr-3 group-hover:animate-spin"></i>
+                        Recherche
+                    </button>
+                </div>
 
-    <div class="text-white flex flex-col gap-4 items-center">
-        <h1 class="text-2xl cursor-pointer relative after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#2B80F6] after:transition-all after:duration-300 hover:after:w-full">Liens rapides</h1>
-        <a class="transition-all duration-300 ease-in-out" href="">Accueil</a>
-        <a class="transition-all duration-300 ease-in-out" href="">A propos</a>
-        <a class="transition-all duration-300 ease-in-out" href="">Répétiteurs</a>
-        <a class="transition-all duration-300 ease-in-out" href="">Anciens sujets</a>
-        <a class="transition-all duration-300 ease-in-out" href="">Contact</a>
-    </div>
+                <!-- Liens rapides -->
+                <div class="text-center lg:text-left space-y-6">
+                    <h3 class="text-2xl font-bold cursor-pointer relative after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[3px] after:w-0 after:bg-gradient-to-r after:from-blue-400 after:to-cyan-400 after:transition-all after:duration-500 hover:after:w-[70%]">
+                        Liens rapides
+                    </h3>
+                    <div class="space-y-4">
+                        <a href="#" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
+                            <i class="fas fa-home text-blue-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                            <span class="group-hover:font-semibold">Accueil</span>
+                        </a>
+                        <a href="#" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
+                            <i class="fas fa-info-circle text-blue-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                            <span class="group-hover:font-semibold">À propos</span>
+                        </a>
+                        <a href="#" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
+                            <i class="fas fa-chalkboard-teacher text-blue-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                            <span class="group-hover:font-semibold">Répétiteurs</span>
+                        </a>
+                        <a href="#" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
+                            <i class="fas fa-file-alt text-blue-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                            <span class="group-hover:font-semibold">Anciens sujets</span>
+                        </a>
+                        <a href="#" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
+                            <i class="fas fa-envelope text-blue-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
+                            <span class="group-hover:font-semibold">Contact</span>
+                        </a>
+                    </div>
+                </div>
 
-    <div class="flex flex-col gap-4 items-center">
-        <h1 class="text-2xl cursor-pointer relative after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#2B80F6] after:transition-all after:duration-300 hover:after:w-full">Contact</h1>
-        <div class="flex flex-row items-center justify-center gap-1">
-            <img class="h-[2rem] w-[2rem]" src="Images/phone_32px.png" alt="">
-            <a href="">(+237) 694 210 071</a>
-        </div>
-        <div class="flex flex-row items-center justify-center gap-1">
-            <img class="h-[2rem] w-[2rem]" src="Images/secured_letter_50px.png" alt="">
-            <a href="">lekol@gmail.com</a>
-        </div>
-    </div>
+                <!-- Contact -->
+                <div class="text-center lg:text-left space-y-6">
+                    <h3 class="text-2xl font-bold cursor-pointer relative after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[3px] after:w-0 after:bg-gradient-to-r after:from-blue-400 after:to-cyan-400 after:transition-all after:duration-500 hover:after:w-[65%]">
+                        Contact
+                    </h3>
+                    <div class="space-y-4">
+                        <a href="tel:+237694210071" class="group flex items-center justify-center lg:justify-start space-x-4 text-slate-300 hover:text-white transition-all duration-300 transform hover:scale-105">
+                            <img class="w-5 h-5" src="Images/telephone (1).png" alt="">
+                            <span class="group-hover:font-semibold">(+237) 694 210 071</span>
+                        </a>
+                        <a href="mailto:lekol@gmail.com" class="group flex items-center justify-center lg:justify-start space-x-4 text-slate-300 hover:text-white transition-all duration-300 transform hover:scale-105">
+                            <img class="w-5 h-5" src="Images/mail.png" alt="">
+                            <span class="group-hover:font-semibold">lekol@gmail.com</span>
+                        </a>
+                    </div>
+                </div>
 
-    <div class="flex flex-col gap-4 items-center">
-        <h1 class="text-2xl cursor-pointer relative after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#2B80F6] after:transition-all after:duration-300 hover:after:w-full">Communauté</h1>
-        <div class="flex flex-row items-center justify-center gap-1">
-            <img class="h-[2rem] w-[2rem]" src="Images/facebook_circled_50px.png" alt="">
-            <a href="">Facebook</a>
-        </div>
+                <!-- Réseaux sociaux -->
+                <div class="text-center lg:text-left space-y-6">
+                    <h3 class="text-2xl font-bold cursor-pointer relative after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[3px] after:w-0 after:bg-gradient-to-r after:from-blue-400 after:to-cyan-400 after:transition-all after:duration-500 hover:after:w-[65%]">
+                        Communauté
+                    </h3>
+                    <div class="space-y-4">
+                        <a href="#" class="flex items-center justify-center lg:justify-start space-x-4 text-slate-300 hover:text-white transition-all duration-300 transform hover:scale-105">
+                            <img class="w-5 h-5" src="Images/facebook-app-symbol.png" alt="">
+                            <span class="group-hover:font-semibold">Facebook</span>
+                        </a>
+                        <a href="#" class="flex items-center justify-center lg:justify-start space-x-4 text-slate-300 hover:text-white transition-all duration-300 transform hover:scale-105">
+                            <img class="w-5 h-5" src="Images/linkedin.png" alt="">
+                            <span class="group-hover:font-semibold">LinkedIn</span>
+                        </a>
+                        <a href="#" class="flex items-center justify-center lg:justify-start space-x-4 text-slate-300 hover:text-white transition-all duration-300 transform hover:scale-105">
+                            <img class="w-5 h-5" src="Images/tik-tok.png" alt="">
+                            <span class="group-hover:font-semibold">TikTok</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-        <div class="flex flex-row items-center justify-center gap-1">
-            <img class="h-[2rem] w-[2rem]" src="Images/linkedin_50px.png" alt="">
-            <a href="">LinkedIn</a>
-        </div>
+            <!-- Séparateur avec animation -->
+            <div class="relative mb-10">
+                    <div class="w-full border-t"></div>   
+            </div>
 
-        <div class="flex flex-row items-center justify-center gap-1">
-            <img class="h-[2rem] w-[2rem]" src="Images/tiktok_50px.png" alt="">
-            <a href="">Tiktok</a>
+            <!-- Copyright -->
+            <div class="text-center">
+                <div class=" bg-white/5 border border-white/10 rounded-xl px-8 py-4 inline-block transform hover:scale-105 transition-all duration-300">
+                    <p class="text-slate-400 hover:text-white transition-colors duration-300">
+                        <i class="far fa-copyright mr-2"></i>
+                       © 2025 Lékol | Tous droits réservés.
+                    </p>
+                </div>
+            </div>
         </div>
-    </div>
-    <p class="flex absolute md:mt-[16rem] mt-[47rem] items-center justify-center text-white/50">© 2025 Lekol | All rights reserved.</p>
-</footer>
+    </footer>
 
 
 
