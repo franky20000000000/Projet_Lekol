@@ -8,20 +8,33 @@
 </head>
 <body>
      <!------------------------------------ entete ------------------------------------>
-    <header id="navbar" class="fixed flex md:justify-around z-50 10 items-center p-4 shadow-[0_0.5px_6px_rgba(0,0,0,0.1)] w-full text-xl">
+    <header id="navbar" class="fixed flex md:justify-around justify-between z-50 items-center p-4 shadow-[0_0.5px_6px_rgba(0,0,0,0.1)] w-full text-xl">
         <div>
-            <a href="index.html" class="text-[#2B80F6] font-bold text-3xl">Lékol</a>
+            <p class="text-[#2B80F6] font-bold text-3xl">Lékol</p>
         </div>
         <div class="md:flex gap-5 hidden">
-            <a class="transition-all duration-300 ease-in-out" href="index.html">Accueil</a>
-            <a class="transition-all duration-300 ease-in-out active" href="">A Propos</a>
+            <a class="transition-all duration-300 ease-in-out active" href="">Accueil</a>
+            <a class="transition-all duration-300 ease-in-out" href="About.html">A Propos</a>
             <a class="transition-all duration-300 ease-in-out" href="Repetiteurs.html">Répétiteurs</a>
             <a class="transition-all duration-300 ease-in-out" href="AnciensSujets.html">Anciens sujets</a>
             <a class="transition-all duration-300 ease-in-out" href="Contact.html">Contact</a>
         </div>
         <div>
-             <button class="bg-[#2B80F6] p-2 px-5 rounded-lg text-white hidden md:block shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-[#2B80F6]-400/50">S'inscrire</button>
+            <a href="Inscription.html"><button class="bg-[#2B80F6] p-2 px-5 rounded-lg text-white hidden md:block shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-[#2B80F6]-400/50">S'inscrire</button></a>
         </div>
+
+        <div id="menu-hamburger" class="md:hidden absolute top-6 right-6 z-50 transition-all duration-[1s]">
+            <img src="Images/menu.png" alt="">
+        </div>
+        
+        <div id="mobilenav" class="md:hidden  flex flex-col gap-5  absolute top-[4.3rem] right-0 bg-white p-5 rounded-lg shadow-lg transition-all duration-[1s] scale-0 transform origin-top-right">
+            <a class="transition-all duration-300 ease-in-out active" href="">Accueil</a>
+            <a class="transition-all duration-300 ease-in-out" href="About.html">A Propos</a>
+            <a class="transition-all duration-300 ease-in-out" href="Repetiteurs.html">Répétiteurs</a>
+            <a class="transition-all duration-300 ease-in-out" href="AnciensSujets.html">Anciens sujets</a>
+            <a class="transition-all duration-300 ease-in-out" href="Contact.html">Contact</a>
+        </div>
+
     </header>
 
     <!------------------------------------ fin entete ------------------------------------>
