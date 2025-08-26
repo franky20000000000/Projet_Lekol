@@ -7,6 +7,14 @@
  
   });
 
+//pour le menu mobile
+const menuHamburger = document.getElementById('menu-hamburger');
+const mobileNav = document.getElementById('mobilenav');
+menuHamburger.addEventListener('click', function() {
+  mobileNav.classList.toggle('scale-0');
+  menuHamburger.classList.toggle('scale-[1.2]');
+});
+
 // --- Carousel
   const track = document.getElementById('carouselTrack');
   const prevBtn = document.getElementById('carouselPrev');

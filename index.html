@@ -24,9 +24,18 @@
             <a href="Inscription.html"><button class="bg-[#2B80F6] p-2 px-5 rounded-lg text-white hidden md:block shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-[#2B80F6]-400/50">S'inscrire</button></a>
         </div>
 
-        <div class="md:hidden absolute top-6 right-6 z-50">
+        <div id="menu-hamburger" class="md:hidden absolute top-6 right-6 z-50 transition-all duration-[1s]">
             <img src="Images/menu.png" alt="">
         </div>
+        
+        <div id="mobilenav" class="md:hidden  flex flex-col gap-5  absolute top-[4.3rem] right-0 bg-white p-5 rounded-lg shadow-lg transition-all duration-[1s] scale-0 transform origin-top-right">
+            <a class="transition-all duration-300 ease-in-out active" href="">Accueil</a>
+            <a class="transition-all duration-300 ease-in-out" href="About.html">A Propos</a>
+            <a class="transition-all duration-300 ease-in-out" href="Repetiteurs.html">Répétiteurs</a>
+            <a class="transition-all duration-300 ease-in-out" href="AnciensSujets.html">Anciens sujets</a>
+            <a class="transition-all duration-300 ease-in-out" href="Contact.html">Contact</a>
+        </div>
+
     </header>
 
 
@@ -675,7 +684,7 @@
                 </div>
             </div>
 
-            <!-- Séparateur avec animation -->
+            <!-- Séparateur -->
             <div class="relative mb-10">
                     <div class="w-full border-t"></div>   
             </div>
