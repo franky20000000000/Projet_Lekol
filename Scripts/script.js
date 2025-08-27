@@ -7,13 +7,30 @@
  
   });
 
-//pour le menu mobile
-const menuHamburger = document.getElementById('menu-hamburger');
-const mobileNav = document.getElementById('mobilenav');
-menuHamburger.addEventListener('click', function() {
-  mobileNav.classList.toggle('scale-0');
-  menuHamburger.classList.toggle('scale-[1.2]');
-});
+// pour le menu mobile
+  const menuHamburger = document.getElementById('menu-hamburger');
+  const mobileNav = document.getElementById('mobilenav');
+
+  menuHamburger.addEventListener('click', function() {
+    if (mobileNav.classList.contains('hidden')) {
+      // ouvrir
+      mobileNav.classList.remove('hidden');
+      setTimeout(() => {
+        mobileNav.classList.remove('scale-0');
+        mobileNav.classList.add('scale-100');
+      }); // petit délai pour déclencher la transition
+    } else {
+      // fermer
+      mobileNav.classList.remove('scale-100');
+      mobileNav.classList.add('scale-0');
+      mobileNav.addEventListener('transitionend', () => {
+        mobileNav.classList.add('hidden');
+      }, { once: true });
+    }
+
+    menuHamburger.classList.toggle('scale-[1.2]');
+  });
+
 
 // --- Carousel
   const track = document.getElementById('carouselTrack');
