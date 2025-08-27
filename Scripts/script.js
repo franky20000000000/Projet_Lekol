@@ -1,4 +1,7 @@
-
+ window.addEventListener("load", function() {
+    document.body.style.visibility = "visible";
+  });
+  
 //pour changer la couleur de la barre de navigation au scroll
   window.addEventListener('scroll', function() {
     const navbar = document.getElementById('navbar');
