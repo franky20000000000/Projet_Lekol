@@ -6,6 +6,8 @@
     <title>Lekol</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;700;900&display=swap">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 </head>
 <body class="overflow-x-hidden">
     <!------------------------------------ entete ------------------------------------>
@@ -40,22 +42,32 @@
 
 
     <!---------------------------------- section1 --------------------------------------->
-    <section class="flex flex-col md:flex-row px-4 md:px-20 md:pt-20 pt-[5rem] mb-16 items-center justify-center justify-between">
-        <div>
+    <section class="flex flex-col md:flex-row px-4 md:px-20 md:pt-20 pt-[5rem] mb-16 items-center justify-between">
+        <!-- Première div : glisse depuis la gauche -->
+        <div class="slide-left">
             <h1 class="font-bold md:text-6xl mt-10 text-4xl mb-10">Répétiteurs à <br> portée de clic </h1>
-            <p class="md:text-xl text-justify mt-10"> <span class="text-[#2B80F6]">Lékol</span> est une plateforme qui connecte les <br>
-                parents d’élèves et étudiants pour un <br>
-                accompagnement scolaire personnalisé.</p>
-            <a href="Inscription.html"><button class="bg-[#2B80F6] p-2 rounded-lg text-white md:mt-20 mt-5 text-xl px-5 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-[#2B80F6]-400/50">Je m'inscris</button></a>
+            <p class="md:text-xl text-justify mt-10">
+            <span class="text-[#2B80F6]">Lékol</span> est une plateforme qui connecte les <br>
+            parents d’élèves et étudiants pour un <br>
+            accompagnement scolaire personnalisé.
+            </p>
+            <a href="Inscription.html">
+            <button class="bg-[#2B80F6] p-2 rounded-lg text-white md:mt-20 mt-5 text-xl px-5 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-[#2B80F6]-400/50">
+                Je m'inscris
+            </button>
+            </a>
         </div>
-        <div class="md:w-1/2 mt-10">
+
+        <!-- Deuxième div : glisse depuis la droite -->
+        <div class="md:w-1/2 slide-right mt-10">
             <img src="Images/undraw_educator_6dgp.png" alt="">
         </div>
     </section>
 
 
+
     <!------------------------------- section 2 ------------------------------------------->
-    <section class="w-full px-4">
+    <section data-aos="fade-up" class="w-full px-4 transition-all duration-300 ease-in-out">
         <div class="bg-gray-200 px-4 md:mx-20 h-auto rounded-lg mb-[60px] flex flex-col py-5 justify-center">
             <h1 class="text-3xl relative font-bold md:left-9 text-center">NOTRE IMPACT EN CHIFFRE</h1>
             <p class="relative md:left-10 mx-3 text-justify md:w-max whitespace-normal">Depuis notre lancement, Lékol transforme l'éducation au Cameroun en facilitant l'accès
@@ -85,10 +97,10 @@
 
         <!------------------------------- section 3 ------------------------------------------->
         <section class="flex md:mx-20 mx-4 justify-between items-center flex-col md:flex-row ">
-            <div class="md:w-1/2">
+            <div data-aos="fade-right" class="md:w-1/2">
                 <img src="Images/undraw_online-test_20lm.png" alt="">
             </div>
-            <div class="md:text-end">
+            <div data-aos="fade-left" class="md:text-end">
                 <h1 class="md:text-6xl text-2xl font-bold mb-5"><span class="text-[#2B80F6]">Comment</span> ça marche ?</h1>
                 <p class="md:text-xl">Inscrivez-vous gratuitement <br>
                     Trouvez un répétiteur pres de chez vous <br>
@@ -100,7 +112,7 @@
 
 
         <!------------------------------- section 4 ------------------------------------------->
-        <section class="relative w-full max-w-7xl mx-auto mt-16 px-4">
+        <section data-aos="fade-up" class="relative w-full max-w-7xl mx-auto mt-16 px-4">
             <div class="flex w-full justify-end pb-2 font-bold relative right-5">
                 <a href="Repetiteurs.html">Voir Plus ></a>
             </div>
@@ -375,7 +387,7 @@
 </section>
 
 <!------------------------------- section 5 ------------------------------------------->
-<section class="w-full flex flex-col mt-[65px] items-center ">
+<section data-aos="fade-up" class="w-full flex flex-col mt-[65px] items-center ">
     <h1 class="md:text-6xl text-2xl font-bold"><span class="text-[#2B80F6]">Pourquoi</span> nous choisir ?</h1>
     <div class=" mt-10 md:grid grid-cols-3 md:gap-4 flex flex-col gap-4 justify-center items-center mx-5 ">
         <div class="h-[15rem] w-[20rem] bg-gray-200 rounded-xl">
@@ -429,7 +441,7 @@
 </section>
 
 <!------------------------------- section 5 ------------------------------------------->
-<section class="flex flex-col mt-[65px] items-center justify-center">
+<section data-aos="fade-up" class="flex flex-col mt-[65px] items-center justify-center">
     <h1 class="md:text-6xl text-2xl font-bold"><span class="text-[#2B80F6]">Anciens</span> sujets & corrigés</h1>
     <p class="my-5 text-center">Prépare toi efficacement aux différents examens.</p>
     <div class="flex flex-col md:flex-row gap-5 my-10 justify-between">
@@ -450,7 +462,7 @@
 </section>
 
 <!------------------------------- section 6 ------------------------------------------->
-<section class="relative w-full flex justify-center items-center py-12 px-4 bg-white">
+<section data-aos="fade-up" class="relative w-full flex justify-center items-center py-12 px-4 bg-white">
   <div class="md:mr-20 md:ml-20 mx-4 w-full relative overflow-hidden">
     
     <!-- Slides container -->
@@ -707,5 +719,8 @@
     </script>
     <script src="Scripts/script.js"></script>
     <script src="Scripts/scriptIncrement.js"></script>
+    <script>
+        AOS.init();
+    </script>
 </body>
 </html>

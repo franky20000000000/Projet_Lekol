@@ -46,3 +46,24 @@ a:hover {
   background-color: rgba(255, 255, 255, 0.5);
   transition: .3s linear;
 }
+
+/* Animation pour glisser depuis la gauche */
+@keyframes slideFromLeft {
+  0% { transform: translateX(-100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+/* Animation pour glisser depuis la droite */
+@keyframes slideFromRight {
+  0% { transform: translateX(100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+/* Classes à utiliser dans le HTML */
+.slide-left {
+  animation: slideFromLeft 1s ease-out forwards;
+}
+
+.slide-right {
+  animation: slideFromRight 1s ease-out forwards;
+}

@@ -30,3 +30,5 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.5 }); // déclenche quand 50% de la section est visible
 
 observer.observe(section);
+
+
