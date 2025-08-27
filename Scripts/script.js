@@ -71,7 +71,6 @@ menuHamburger.addEventListener('click', function() {
     testimonialIndex = (testimonialIndex + direction + totalTestimonialSlides) % totalTestimonialSlides;
     updateTestimonialSlider();
   }
-
 // Initial load
   updateTestimonialSlider();
 //fin de la fonction slider de témoignages
