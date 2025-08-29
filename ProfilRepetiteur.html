@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Répétiteur - Lekol</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="ProfilRepetiteur.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <!------------------------------------ entete ------------------------------------>
+    <header id="navbar" class="fixed flex md:justify-between justify-between z-50 items-center p-4 shadow-[0_0.5px_6px_rgba(0,0,0,0.1)] w-full text-xl">
+        <div>
+            <a href="index.html"><p class="text-[#2B80F6] font-bold text-3xl">Lékol</p></a>
+        </div>
+
+        <div id="menu-hamburger" class="md:hidden absolute top-6 right-6 z-50 transition-all duration-[1s]">
+            <img src="Images/menu.png" alt="">
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Sidebar avec informations principales -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-lg p-6 sticky top-24">
+                    <div class="flex flex-col items-center mb-6">
+                        <div class="relative mb-4">
+                            <img src="Images/student-7378903_1920.jpg" 
+                                 alt="Photo de profil" class="w-32 h-32 rounded-full object-cover border-4 border-white shadow">
+                            <span class="availability-dot availability-available absolute bottom-3 right-3"></span>
+                        </div>
+                        <h1 class="text-2xl font-bold">Lamine Yamal</h1>
+                        <p class="text-gray-600">Étudiant en Génie Logiciel</p>
+                        <div class="flex items-center mt-2">
+                            <div class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="ml-2 text-gray-600">4.5 (12 avis)</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">Disponibilités</h3>
+                            <ul class="space-y-2">
+                                <li class="flex justify-between">
+                                    <span>Lundi</span>
+                                    <span>18h - 20h</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span>Mercredi</span>
+                                    <span>16h - 20h</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span>Samedi</span>
+                                    <span>9h - 12h, 14h - 18h</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">Localisation</h3>
+                            <p class="flex items-center">
+                                <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
+                                Douala,Bonamoussadi
+                            </p>
+                        </div>
+
+                        <button class="w-full py-3 bg-[#2B80F6] text-white font-semibold rounded-lg hover:bg-blue-700 transition flex items-center justify-center">
+                            <i class="fas fa-comment-dots mr-2"></i> Appeler ce répétiteur
+                        </button>
+
+                        <button class="w-full py-3 bg-[#2B80F6] text-white font-semibold rounded-lg hover:bg-blue-700 transition flex items-center justify-center">
+                            <i class="fas fa-comment-dots mr-2"></i> Envoyer un message
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenu principal -->
+            <div class="lg:col-span-2 space-y-8 md:mt-16">
+                <!-- Section À propos -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card">
+                    <h2 class="text-xl font-bold mb-4">À propos de moi</h2>
+                    <p class="text-gray-700">
+                        Je suis actuellement en 2ème année à l'IAI Cameroun, spécialisé en Génie Logiciel. Passionné par les mathématiques et la physique, j'aide les élèves à surmonter leurs difficultés depuis maintenant 3 ans. Ma méthodologie est basée sur l'écoute et la pratique intensive d'exercices. Je crois que chaque élève peut réussir avec le bon accompagnement.
+                    </p>
+                </div>
+
+                <!-- Section Informations académiques -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card">
+                    <h2 class="text-xl font-bold mb-4">Informations académiques</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h3 class="font-semibold text-gray-600">Statut académique</h3>
+                            <p>Étudiant en École d'ingénieur</p>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-600">Établissement</h3>
+                            <p>IAI Cameroun</p>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-600">Filière</h3>
+                            <p>Génie Logiciel</p>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-600">Âge</h3>
+                            <p>22 ans</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Compétences -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card">
+                    <h2 class="text-xl font-bold mb-4">Compétences</h2>
+                    <div class="mb-6">
+                        <h3 class="font-semibold text-gray-600 mb-2">Matières enseignées</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="badge">Mathématiques</span>
+                            <span class="badge">Physique</span>
+                            <span class="badge">SVT</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-600 mb-2">Niveaux enseignés</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="badge">Collège</span>
+                            <span class="badge">Lycée</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Expérience -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card">
+                    <h2 class="text-xl font-bold mb-4">Expérience</h2>
+                    <p class="text-gray-700">
+                        3 ans d'expérience en soutien scolaire, ayant accompagné plus de 15 élèves dans leur progression académique. Major de promotion lors de ma première année à l'IAI Cameroun.
+                    </p>
+                </div>
+
+                <!-- Section Zone de déplacement -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card">
+                    <h2 class="text-xl font-bold mb-4">Zone de déplacement</h2>
+                    <p class="text-gray-700">
+                        Je me déplace dans les quartiers : Bonamoussadi, Akwa, Bali, Bonabéri et Deido.
+                    </p>
+                </div>
+
+                <!-- Section Avis -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card">
+                    <h2 class="text-xl font-bold mb-4">Avis (12)</h2>
+                    <div class="space-y-4">
+                        <div class="border-b pb-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-semibold">Marie K.</h3>
+                                    <div class="rating-stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                                <span class="text-sm text-gray-500">Il y a 2 semaines</span>
+                            </div>
+                            <p class="mt-2 text-gray-700">Koffi a redonné confiance à ma fille. Ses explications sont claires et il est très ponctuel. Je le recommande vivement !</p>
+                        </div>
+                        <div class="border-b pb-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-semibold">Paul A.</h3>
+                                    <div class="rating-stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                </div>
+                                <span class="text-sm text-gray-500">Il y a 1 mois</span>
+                            </div>
+                            <p class="mt-2 text-gray-700">Mon fils a progressé de 3 points en maths depuis qu'il travaille avec Koffi. Très professionnel.</p>
+                        </div>
+                    </div>
+                    <button class="mt-4 text-blue-600 font-semibold flex items-center">
+                        Voir tous les avis <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="Scripts/ProfilRepetiteur.js"></script>
+    <script src="Scripts/tailwindcss.js"></script>
+    <script src="Scripts/scriptIncrement.js"></script>
+    <script src="Scripts/script.js"></script>
+</body>
+</html>
