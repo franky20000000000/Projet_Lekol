@@ -9,7 +9,6 @@ if(!isset($_SESSION['id'])){
 ?>
 
 
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -51,7 +50,7 @@ if(!isset($_SESSION['id'])){
         </div>
         
         <div id="mobilenav" class="md:hidden scale-0 flex flex-col gap-5  absolute top-[4.3rem] right-0 bg-white p-5 rounded-lg shadow-lg transition-all duration-[1s] transform origin-top-right">
-            <a class="transition-all duration-300 ease-in-out" href="">Accueil</a>
+            <a class="transition-all duration-300 ease-in-out" href="index2.php">Accueil</a>
             <a class="transition-all duration-300 ease-in-out" href="About2.php">A Propos</a>
             <a class="transition-all duration-300 ease-in-out" href="Repetiteurs2.php">Répétiteurs</a>
             <a class="transition-all duration-300 ease-in-out" href="AnciensSujets2.php">Anciens sujets</a>

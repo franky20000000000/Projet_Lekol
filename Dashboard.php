@@ -1,10 +1,8 @@
 <?php
 session_start();
-
-// Vérifier si l'utilisateur est connecté et est l'administrateur
-if (!isset($_SESSION['email']) || $_SESSION['email'] !== 'tiomenecabrel@gmail.com') {
-    header("Location: Connexion.php");
-    exit();
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: AdminLogin.php');
+    exit;
 }
 ?>
 
@@ -170,7 +168,7 @@ if (!isset($_SESSION['email']) || $_SESSION['email'] !== 'tiomenecabrel@gmail.co
                                     <div class="flex items-center justify-between">
                                         <div>
                                             <p class="text-xs lg:text-sm text-gray-600 mb-2">Répétiteurs inscrits</p>
-                                            <p class="text-xl lg:text-2xl font-bold text-black">147</p>
+                                            <p class="text-xl lg:text-2xl font-bold text-black" data-stat="repetiteurs">0</p>
                                         </div>
                                         <div class="p-2 lg:p-3 bg-blue-50 rounded-lg">
                                             <i class="fas fa-user-tie text-lg lg:text-xl text-primary"></i>
@@ -182,7 +180,7 @@ if (!isset($_SESSION['email']) || $_SESSION['email'] !== 'tiomenecabrel@gmail.co
                                     <div class="flex items-center justify-between">
                                         <div>
                                             <p class="text-xs lg:text-sm text-gray-600 mb-2">Parents</p>
-                                            <p class="text-xl lg:text-2xl font-bold text-black">523</p>
+                                            <p class="text-xl lg:text-2xl font-bold text-black" data-stat="parents">0</p>
                                         </div>
                                         <div class="p-2 lg:p-3 bg-green-50 rounded-lg">
                                             <i class="fas fa-users text-lg lg:text-xl text-green-600"></i>
@@ -194,7 +192,7 @@ if (!isset($_SESSION['email']) || $_SESSION['email'] !== 'tiomenecabrel@gmail.co
                                     <div class="flex items-center justify-between">
                                         <div>
                                             <p class="text-xs lg:text-sm text-gray-600 mb-2">Abonnements actifs</p>
-                                            <p class="text-xl lg:text-2xl font-bold text-black">89</p>
+                                            <p class="text-xl lg:text-2xl font-bold text-black">0</p>
                                         </div>
                                         <div class="p-2 lg:p-3 bg-purple-50 rounded-lg">
                                             <i class="fas fa-credit-card text-lg lg:text-xl text-purple-600"></i>
@@ -206,7 +204,7 @@ if (!isset($_SESSION['email']) || $_SESSION['email'] !== 'tiomenecabrel@gmail.co
                                     <div class="flex items-center justify-between">
                                         <div>
                                             <p class="text-xs lg:text-sm text-gray-600 mb-2">Contacts initiés</p>
-                                            <p class="text-xl lg:text-2xl font-bold text-black">1,234</p>
+                                            <p class="text-xl lg:text-2xl font-bold text-black" data-stat="avis">0</p>
                                         </div>
                                         <div class="p-2 lg:p-3 bg-orange-50 rounded-lg">
                                             <i class="fas fa-phone text-lg lg:text-xl text-orange-600"></i>

@@ -1,35 +1,7 @@
 // Fonctionnalité de gestion des parents
 const Parents = {
     // Données des parents
-    data: [
-        {
-            id: 1,
-            nom: 'Pierre Dupont',
-            email: 'pierre.dupont@email.com',
-            telephone: '0123456789',
-            dateInscription: '2024-01-15',
-            derniereConnexion: '2024-01-20',
-            nombreContacts: 5
-        },
-        {
-            id: 2,
-            nom: 'Isabelle Martin',
-            email: 'isabelle.martin@email.com',
-            telephone: '0123456790',
-            dateInscription: '2024-01-10',
-            derniereConnexion: '2024-01-19',
-            nombreContacts: 3
-        },
-        {
-            id: 3,
-            nom: 'Thomas Bernard',
-            email: 'thomas.bernard@email.com',
-            telephone: '0123456791',
-            dateInscription: '2024-01-05',
-            derniereConnexion: '2024-01-18',
-            nombreContacts: 8
-        }
-    ],
+    data: [],
     
     // Données filtrées pour l'affichage
     filteredData: [],
@@ -43,9 +15,19 @@ const Parents = {
     init() {
         this.render();
         this.bindEvents();
-        this.filteredData = [...this.data];
-        this.renderTable();
-        this.loadStats();
+        this.fetch();
+    },
+
+    fetch() {
+        apiGet('list_parents').then(res => {
+            if (res && res.success) {
+                this.data = (res.data && res.data.items) || [];
+                this.filteredData = [...this.data];
+                this.renderTable();
+                this.updateCount();
+                this.loadStats();
+            }
+        }).catch(()=>{});
     },
     
     // Rendu de l'interface
@@ -136,11 +118,10 @@ const Parents = {
     
     // Chargement des statistiques
     loadStats() {
-        // Calculer le total des contacts
-        const totalContacts = this.data.reduce((total, parent) => total + parent.nombreContacts, 0);
-        
-        // Mettre à jour l'affichage des statistiques
+        const totalContacts = 0;
         document.getElementById('stat-contacts').textContent = totalContacts;
+        const statParents = document.getElementById('stat-parents');
+        if (statParents) statParents.textContent = this.data.length;
     },
     
     // Application des filtres

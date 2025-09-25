@@ -35,11 +35,11 @@
         </div>
         
         <div id="mobilenav" class="md:hidden  flex flex-col gap-5  absolute top-[4.3rem] right-0 bg-white p-5 rounded-lg shadow-lg transition-all duration-[1s] scale-0 transform origin-top-right">
-            <a class="transition-all duration-300 ease-in-out" href="index.html">Accueil</a>
-            <a class="transition-all duration-300 ease-in-out" href="About.html">A Propos</a>
-            <a class="transition-all duration-300 ease-in-out" href="Repetiteurs.html">Répétiteurs</a>
+            <a class="transition-all duration-300 ease-in-out" href="index.php">Accueil</a>
+            <a class="transition-all duration-300 ease-in-out" href="About.php">A Propos</a>
+            <a class="transition-all duration-300 ease-in-out" href="Repetiteurs.php">Répétiteurs</a>
             <a class="transition-all duration-300 ease-in-out active" href="">Anciens sujets</a>
-            <a class="transition-all duration-300 ease-in-out" href="Contact.html">Contact</a>
+            <a class="transition-all duration-300 ease-in-out" href="Contact.php">Contact</a>
         </div>
 
     </header>

@@ -19,6 +19,40 @@ try {
     die("Erreur de connexion : " . $e->getMessage());
 }
 
+// Classe pour gérer les avis
+class AvisManager {
+    private $pdo;
+    
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
+    }
+    
+    // Récupérer les avis d'un répétiteur
+    public function getAvisParRepetiteur($repetiteur_id, $limit = 10) {
+        $limit = (int)$limit;
+        $sql = "SELECT a.*, p.nom as parent_nom, p.prenom as parent_prenom 
+                FROM avis a 
+                LEFT JOIN parent p ON a.parent_id = p.id 
+                WHERE a.repetiteur_id = ? AND a.statut = 'approuve' 
+                ORDER BY a.date_creation DESC 
+                LIMIT " . $limit;
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$repetiteur_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    // Calculer la moyenne des notes
+    public function getMoyenneNotes($repetiteur_id) {
+        $sql = "SELECT AVG(note) as moyenne, COUNT(*) as total 
+                FROM avis
+                WHERE repetiteur_id = ? AND statut = 'approuve'";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$repetiteur_id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+}
+
 // Récupérer les informations du répétiteur
 $repetiteur_id = $_SESSION['id'];
 $sql = "SELECT * FROM repetiteur WHERE id = ?";
@@ -26,41 +60,66 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute([$repetiteur_id]);
 $repetiteur = $stmt->fetch(PDO::FETCH_ASSOC);
 
+// Instancier le gestionnaire d'avis
+$avisManager = new AvisManager($pdo);
+
+// Récupérer les avis et la moyenne
+$avis = $avisManager->getAvisParRepetiteur($repetiteur_id);
+$moyenne = $avisManager->getMoyenneNotes($repetiteur_id);
+$note_moyenne = $moyenne['moyenne'] ? round($moyenne['moyenne'], 1) : 0;
+$total_avis = $moyenne['total'] ? $moyenne['total'] : 0;
+
 // Traitement de la mise à jour des informations
-if (isset($_POST['update'])) {
-    $nom = $_POST['nom'];
-    $prenom = $_POST['prenom'];
-    $email = $_POST['email'];
-    $telephone = $_POST['telephone'];
-    $ville = $_POST['ville'];
-    $quartier = $_POST['quartier'];
-    $niveau = $_POST['niveau'];
-    $universite = $_POST['universite'];
-    $filiere = $_POST['filiere'];
-    $matiere = $_POST['matiere'];
-    $niveauCible = $_POST['niveauCible'];
-    $zone = $_POST['zone'];
-    $description = $_POST['description'];
-    
-    // Mise à jour dans la base de données
+if (isset($_POST['update']) || (!empty($_FILES['photo']['name']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK)) {
+    // Valeurs par défaut depuis la base si le formulaire auto-submit uniquement la photo
+    $nom = $_POST['nom'] ?? $repetiteur['nom'];
+    $prenom = $_POST['prenom'] ?? $repetiteur['prenom'];
+    $email = $_POST['email'] ?? $repetiteur['email'];
+    $telephone = $_POST['telephone'] ?? $repetiteur['telephone'];
+    $ville = $_POST['ville'] ?? $repetiteur['ville'];
+    $quartier = $_POST['quartier'] ?? $repetiteur['quartier'];
+    $niveau = $_POST['niveau'] ?? $repetiteur['niveau_etudes'];
+    $universite = $_POST['universite'] ?? $repetiteur['universite'];
+    $filiere = $_POST['filiere'] ?? $repetiteur['filiere'];
+    $matiere = $_POST['matiere'] ?? $repetiteur['matieres'];
+    $niveauCible = $_POST['niveauCible'] ?? $repetiteur['niveau_cible'];
+    $zone = $_POST['zone'] ?? $repetiteur['zones'];
+    $description = $_POST['description'] ?? $repetiteur['description'];
+    $experience = $_POST['experience'] ?? ($repetiteur['experience'] ?? null);
+
+    // Upload photo (optionnel)
+    $photoPath = $repetiteur['piece_identite'] ?? null;
+    if (!empty($_FILES['photo']['name']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+        $allowed = ['image/jpeg','image/png','image/webp'];
+        if (in_array($_FILES['photo']['type'], $allowed)) {
+            $ext = pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION);
+            $fileName = 'uploads/repetiteur_' . $_SESSION['id'] . '_' . time() . '.' . strtolower($ext);
+            if (!is_dir('uploads')) { @mkdir('uploads', 0777, true); }
+            if (move_uploaded_file($_FILES['photo']['tmp_name'], $fileName)) {
+                $photoPath = $fileName;
+            }
+        }
+    }
+
+    // Mise à jour dans la base de données (avec piece_identite & experience)
     $sql_update = "UPDATE repetiteur SET nom=?, prenom=?, email=?, telephone=?, ville=?, quartier=?, 
-                  niveau_etudes=?, universite=?, filiere=?, matieres=?, niveau_cible=?, zones=?, description=? 
+                  niveau_etudes=?, universite=?, filiere=?, matieres=?, niveau_cible=?, zones=?, description=?, experience=?, piece_identite=? 
                   WHERE id=?";
     $stmt_update = $pdo->prepare($sql_update);
     $ok = $stmt_update->execute([
-        $nom, $prenom, $email, $telephone, $ville, $quartier, $niveau, $universite, 
-        $filiere, $matiere, $niveauCible, $zone, $description, $repetiteur_id
+        $nom, $prenom, $email, $telephone, $ville, $quartier, $niveau, $universite,
+        $filiere, $matiere, $niveauCible, $zone, $description, $experience, $photoPath, $repetiteur_id
     ]);
-    
+
     if ($ok) {
         // Mettre à jour les informations en session
         $_SESSION['nom'] = $nom;
         $_SESSION['prenom'] = $prenom;
-        
+
         // Recharger les informations du répétiteur
         $stmt->execute([$repetiteur_id]);
         $repetiteur = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+
         $message_success = "Vos informations ont été mises à jour avec succès!";
     } else {
         $message_error = "Une erreur s'est produite lors de la mise à jour.";
@@ -81,6 +140,7 @@ if (isset($_GET['deconnexion'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Répétiteur - Lekol</title>
+    <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="ProfilRepetiteur.css">
@@ -147,6 +207,28 @@ if (isset($_GET['deconnexion'])) {
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+        .badge {
+            background: #e5e7eb;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #374151;
+        }
+        .availability-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        .availability-available {
+            background: #10b981;
+        }
+        .card {
+            transition: transform 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -175,29 +257,46 @@ if (isset($_GET['deconnexion'])) {
             <div class="alert alert-error"><?php echo $message_error; ?></div>
         <?php endif; ?>
         
-        <form method="post" action="">
+        <form id="profilForm" method="post" action="" enctype="multipart/form-data">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Sidebar avec informations principales -->
                 <div class="lg:col-span-1">
                     <div class="bg-white rounded-xl shadow-lg p-6 sticky top-24">
                         <div class="flex flex-col items-center mb-6">
                             <div class="relative mb-4">
-                                <img src="Images/student-7378903_1920.jpg" 
-                                     alt="Photo de profil" class="w-32 h-32 rounded-full object-cover border-4 border-white shadow">
+                                <?php if (!empty($repetiteur['piece_identite'])): ?>
+                                    <?php 
+                                        $imgPath = $repetiteur['piece_identite'];
+                                        $ver = (is_file($imgPath) ? @filemtime($imgPath) : time());
+                                    ?>
+                                    <img src="<?php echo htmlspecialchars($imgPath . '?v=' . $ver); ?>" 
+                                         alt="Photo de profil" class="w-32 h-32 rounded-full object-cover border-4 border-white shadow">
+                                <?php else: ?>
+                                    <img src="Images/student-7378903_1920.jpg" 
+                                         alt="Photo de profil" class="w-32 h-32 rounded-full object-cover border-4 border-white shadow">
+                                <?php endif; ?>
                                 <span class="availability-dot availability-available absolute bottom-3 right-3"></span>
                             </div>
+                            <label class="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm">
+                                <i class="fas fa-camera"></i> Changer la photo
+                                <input type="file" name="photo" accept="image/*" class="hidden" onchange="document.getElementById('profilForm').submit()">
+                            </label>
                             <h1 class="text-2xl font-bold"><?php echo htmlspecialchars($repetiteur['prenom'] . ' ' . $repetiteur['nom']); ?></h1>
                             <p class="text-gray-600"><?php echo htmlspecialchars($repetiteur['filiere']); ?></p>
                             <div class="flex items-center mt-2">
-                                <!-- Étoiles -->
+                                <!-- Étoiles dynamiques -->
                                 <div class="flex items-center gap-1 mt-1">
-                                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
+                                    <?php
+                                    for ($i = 1; $i <= 5; $i++) {
+                                        if ($i <= floor($note_moyenne)) {
+                                            echo '<svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>';
+                                        } else {
+                                            echo '<svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>';
+                                        }
+                                    }
+                                    ?>
                                 </div>
-                                <span class="ml-2 text-gray-600">4.0 (12 avis)</span>
+                                <span class="ml-2 text-gray-600"><?php echo $note_moyenne; ?> (<?php echo $total_avis; ?> avis)</span>
                             </div>
                         </div>
 
@@ -227,14 +326,6 @@ if (isset($_GET['deconnexion'])) {
                                     <?php echo htmlspecialchars($repetiteur['ville'] . ', ' . $repetiteur['quartier']); ?>
                                 </p>
                             </div>
-
-                            <button class="w-full py-3 bg-[#2B80F6] text-white font-semibold rounded-lg hover:bg-blue-700 transition flex items-center justify-center">
-                                <i class="fas fa-comment-dots mr-2"></i> Appeler ce répétiteur
-                            </button>
-
-                            <button class="w-full py-3 bg-[#2B80F6] text-white font-semibold rounded-lg hover:bg-blue-700 transition flex items-center justify-center">
-                                <i class="fas fa-comment-dots mr-2"></i> Envoyer un message
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -460,12 +551,29 @@ if (isset($_GET['deconnexion'])) {
                         </div>
                     </div>
 
-                    <!-- Section Expérience -->
-                    <div class="bg-white rounded-xl shadow-lg p-6 card">
+                    <!-- Section Expérience (éditable) -->
+                    <div class="bg-white rounded-xl shadow-lg p-6 card editable-section">
+                        <button type="button" class="edit-btn" onclick="toggleEdit('experience')">
+                            <i class="fas fa-edit"></i>
+                        </button>
                         <h2 class="text-xl font-bold mb-4">Expérience</h2>
-                        <p class="text-gray-700">
-                            3 ans d'expérience en soutien scolaire, ayant accompagné plus de 15 élèves dans leur progression académique. Major de promotion lors de ma première année à l'IAI Cameroun.
-                        </p>
+                        <div id="experience-view" class="view-mode">
+                            <p class="text-gray-700">
+                                <?php 
+                                $expTxt = isset($repetiteur['experience']) && $repetiteur['experience'] !== ''
+                                    ? nl2br(htmlspecialchars($repetiteur['experience']))
+                                    : "Renseignez votre expérience (années, réussites, méthodologie, spécialisations).";
+                                echo $expTxt;
+                                ?>
+                            </p>
+                        </div>
+                        <div id="experience-edit" class="edit-mode">
+                            <textarea name="experience" class="w-full border rounded p-2" rows="5"><?php echo htmlspecialchars($repetiteur['experience'] ?? ''); ?></textarea>
+                            <div class="form-actions">
+                                <button type="button" class="btn-save" onclick="toggleEdit('experience')">Enregistrer</button>
+                                <button type="button" class="btn-cancel" onclick="toggleEdit('experience')">Annuler</button>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Section Zone de déplacement -->
@@ -490,48 +598,57 @@ if (isset($_GET['deconnexion'])) {
                         </div>
                     </div>
 
-                    <!-- Section Avis -->
+                    <!-- Section Avis dynamique -->
                     <div class="bg-white rounded-xl shadow-lg p-6 card">
-                        <h2 class="text-xl font-bold mb-4">Avis (12)</h2>
-                        <div class="space-y-4">
-                            <div class="border-b pb-4">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <h3 class="font-semibold">Marie K.</h3>
-                                        <!-- Étoiles -->
-                                        <div class="flex items-center gap-1 mt-1">
-                                            <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                            <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                            <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                            <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                            <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
+                        <h2 class="text-xl font-bold mb-4">Avis (<?php echo $total_avis; ?>)</h2>
+                        
+                        <?php if (count($avis) > 0): ?>
+                            <div class="space-y-4">
+                                <?php foreach ($avis as $avis_item): ?>
+                                    <div class="border-b pb-4">
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <h3 class="font-semibold">
+                                                    <?php echo htmlspecialchars($avis_item['parent_prenom'] . ' ' . substr($avis_item['parent_nom'], 0, 1) . '.'); ?>
+                                                </h3>
+                                                <!-- Étoiles dynamiques pour chaque avis -->
+                                                <div class="flex items-center gap-1 mt-1">
+                                                    <?php
+                                                    for ($i = 1; $i <= 5; $i++) {
+                                                        if ($i <= $avis_item['note']) {
+                                                            echo '<svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>';
+                                                        } else {
+                                                            echo '<svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>';
+                                                        }
+                                                    }
+                                                    ?>
+                                                </div>
+                                            </div>
+                                            <span class="text-sm text-gray-500">
+                                                <?php
+                                                $date_avis = new DateTime($avis_item['date_creation']);
+                                                $aujourdhui = new DateTime();
+                                                $difference = $date_avis->diff($aujourdhui);
+                                                
+                                                if ($difference->y > 0) {
+                                                    echo 'Il y a ' . $difference->y . ' an' . ($difference->y > 1 ? 's' : '');
+                                                } elseif ($difference->m > 0) {
+                                                    echo 'Il y a ' . $difference->m . ' mois';
+                                                } elseif ($difference->d > 0) {
+                                                    echo 'Il y a ' . $difference->d . ' jour' . ($difference->d > 1 ? 's' : '');
+                                                } else {
+                                                    echo 'Aujourd\'hui';
+                                                }
+                                                ?>
+                                            </span>
                                         </div>
+                                        <p class="mt-2 text-gray-700"><?php echo nl2br(htmlspecialchars($avis_item['commentaire'])); ?></p>
                                     </div>
-                                    <span class="text-sm text-gray-500">Il y a 2 semaines</span>
-                                </div>
-                                <p class="mt-2 text-gray-700">Koffi a redonné confiance à ma fille. Ses explications sont claires et il est très ponctuel. Je le recommande vivement !</p>
+                                <?php endforeach; ?>
                             </div>
-                            <div class="border-b pb-4">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <h3 class="font-semibold">Paul A.</h3>
-                                        <!-- Étoiles -->
-                                        <div class="flex items-center gap-1 mt-1">
-                                            <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                            <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                            <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                            <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                            <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                        </div>
-                                </div>
-                                    <span class="text-sm text-gray-500">Il y a 1 mois</span>
-                                </div>
-                                <p class="mt-2 text-gray-700">Mon fils a progressé de 3 points en maths depuis qu'il travaille avec Koffi. Très professionnel.</p>
-                            </div>
-                        </div>
-                        <button class="mt-4 text-blue-600 font-semibold flex items-center">
-                            Voir tous les avis <i class="fas fa-arrow-right ml-2"></i>
-                        </button>
+                        <?php else: ?>
+                            <p class="text-gray-500 text-center py-4">Aucun avis pour le moment.</p>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

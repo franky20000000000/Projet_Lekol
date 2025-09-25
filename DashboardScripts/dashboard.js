@@ -5,31 +5,62 @@ const Dashboard = {
     init() {
         this.loadActivitiesRecentes();
         this.initCharts();
+        // Charger stats réelles si éléments présents
+        apiGet('get_stats').then(data => {
+            if (data && data.success && data.data) {
+                const d = data.data;
+                const elRep = document.querySelector('#dashboard-section [data-stat="repetiteurs"]');
+                const elPar = document.querySelector('#dashboard-section [data-stat="parents"]');
+                const elAvis = document.querySelector('#dashboard-section [data-stat="avis"]');
+                // Si vous ajoutez des attributs data-stat dans le HTML, ils seront mis à jour ici
+                if (elRep) elRep.textContent = d.repetiteurs;
+                if (elPar) elPar.textContent = d.parents;
+                if (elAvis) elAvis.textContent = d.avis;
+            }
+        }).catch(()=>{});
     },
     
     loadActivitiesRecentes() {
-        const activitiesData = [
-            { type: 'inscription', name: 'Marie Dubois', action: 'Nouveau répétiteur inscrit', time: 'Il y a 2h' },
-            { type: 'avis', name: 'Jean Martin', action: 'Nouvel avis 5 étoiles', time: 'Il y a 3h' },
-            { type: 'contact', name: 'Sophie Bernard', action: 'Contact avec répétiteur', time: 'Il y a 5h' },
-            { type: 'abonnement', name: 'Pierre Durand', action: 'Abonnement renouvelé', time: 'Il y a 1 jour' },
-        ];
-        
         const container = document.getElementById('activites-recentes');
         if (!container) return;
-        
-        container.innerHTML = activitiesData.map(activity => `
-            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div class="flex items-center space-x-3">
-                    <div class="w-2 h-2 bg-primary rounded-full"></div>
-                    <div>
-                        <p class="font-medium text-black">${activity.name}</p>
-                        <p class="text-sm text-gray-600">${activity.action}</p>
+        container.innerHTML = '<div class="text-sm text-gray-500">Chargement...</div>';
+        apiGet('get_recent_activities').then(res => {
+            if (!(res && res.success)) { container.innerHTML = ''; return; }
+            const items = (res.data && res.data.items) || [];
+            if (items.length === 0) { container.innerHTML = '<div class="text-sm text-gray-500">Aucune activité récente</div>'; return; }
+            container.innerHTML = items.map(activity => `
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-2 h-2 ${Dashboard.getTypeColor(activity.type)} rounded-full"></div>
+                        <div>
+                            <p class="font-medium text-black">${activity.name || ''}</p>
+                            <p class="text-sm text-gray-600">${activity.action || ''}</p>
+                        </div>
                     </div>
+                    <span class="text-sm text-gray-500">${Dashboard.formatRelative(activity.timestamp)}</span>
                 </div>
-                <span class="text-sm text-gray-500">${activity.time}</span>
-            </div>
-        `).join('');
+            `).join('');
+        }).catch(() => { container.innerHTML = ''; });
+    },
+    
+    getTypeColor(type) {
+        switch (type) {
+            case 'inscription_repetiteur': return 'bg-blue-500';
+            case 'inscription_parent': return 'bg-green-500';
+            case 'avis': return 'bg-yellow-500';
+            default: return 'bg-primary';
+        }
+    },
+    
+    formatRelative(ts) {
+        try {
+            const d = new Date(ts);
+            const diff = (Date.now() - d.getTime()) / 1000;
+            if (diff < 60) return "À l'instant";
+            if (diff < 3600) return `Il y a ${Math.floor(diff/60)} min`;
+            if (diff < 86400) return `Il y a ${Math.floor(diff/3600)} h`;
+            return d.toLocaleDateString('fr-FR');
+        } catch { return ''; }
     },
     
     initCharts() {

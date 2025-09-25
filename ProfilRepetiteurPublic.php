@@ -27,6 +27,90 @@ if (!isset($_GET['id'])) {
 }
 
 $repetiteur_id = (int)$_GET['id'];
+$parent_id = $_SESSION['id'];
+
+// Classe pour gérer les avis
+class AvisManager {
+    private $pdo;
+    
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
+    }
+    
+    // Ajouter un avis
+    public function ajouterAvis($parent_id, $repetiteur_id, $note, $commentaire) {
+        $sql = "INSERT INTO avis (parent_id, repetiteur_id, note, commentaire) 
+                VALUES (?, ?, ?, ?)";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([$parent_id, $repetiteur_id, $note, $commentaire]);
+    }
+    
+    // Récupérer les avis d'un répétiteur (CORRIGÉ)
+    public function getAvisParRepetiteur($repetiteur_id, $limit = 10) {
+        // Utiliser un entier pour la limite
+        $limit = (int)$limit;
+        $sql = "SELECT a.*, p.nom as parent_nom, p.prenom as parent_prenom 
+                FROM avis a 
+                LEFT JOIN parent p ON a.parent_id = p.id 
+                WHERE a.repetiteur_id = ? AND a.statut = 'approuve' 
+                ORDER BY a.date_creation DESC 
+                LIMIT " . $limit;
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$repetiteur_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    // Calculer la moyenne des notes
+    public function getMoyenneNotes($repetiteur_id) {
+        $sql = "SELECT AVG(note) as moyenne, COUNT(*) as total 
+                FROM avis
+                WHERE repetiteur_id = ? AND statut = 'approuve'";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$repetiteur_id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    
+    // Compter le nombre d'avis d'un parent pour un répétiteur
+    public function getNombreAvisParent($parent_id, $repetiteur_id) {
+        $sql = "SELECT COUNT(*) as count FROM avis 
+                WHERE parent_id = ? AND repetiteur_id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$parent_id, $repetiteur_id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['count'];
+    }
+}
+
+// Instancier le gestionnaire d'avis
+$avisManager = new AvisManager($pdo);
+
+// Traitement du formulaire d'avis
+$message_avis = '';
+if ($_POST && isset($_POST['submit_avis'])) {
+    $note = filter_var($_POST['note'], FILTER_VALIDATE_INT, [
+        'options' => ['min_range' => 1, 'max_range' => 5]
+    ]);
+    
+    $commentaire = htmlspecialchars(trim($_POST['commentaire']));
+    
+    if ($note && !empty($commentaire)) {
+        // Autoriser jusqu'à 5 avis par parent pour ce répétiteur
+        $nbAvis = $avisManager->getNombreAvisParent($parent_id, $repetiteur_id);
+        if ($nbAvis < 5) {
+            if ($avisManager->ajouterAvis($parent_id, $repetiteur_id, $note, $commentaire)) {
+                $restants = 4 - $nbAvis; // après insertion, il en restera au max (5 - (nbAvis+1))
+                $message_avis = '<div class="alert alert-success">Votre avis a été ajouté avec succès ! Il vous reste ' . max(0, $restants) . ' avis possibles.</div>';
+            } else {
+                $message_avis = '<div class="alert alert-error">Une erreur s\'est produite lors de l\'ajout de l\'avis.</div>';
+            }
+        } else {
+            $message_avis = '<div class="alert alert-error">Limite atteinte : vous avez déjà laissé 5 avis pour ce répétiteur.</div>';
+        }
+    } else {
+        $message_avis = '<div class="alert alert-error">Veuillez donner une note et un commentaire valides.</div>';
+    }
+}
 
 // Récupérer les informations du répétiteur
 $sql = "SELECT * FROM repetiteur WHERE id = :id";
@@ -40,11 +124,19 @@ if (!$repetiteur) {
     exit;
 }
 
+// Récupérer les avis et la moyenne
+$avis = $avisManager->getAvisParRepetiteur($repetiteur_id);
+$moyenne = $avisManager->getMoyenneNotes($repetiteur_id);
+$note_moyenne = $moyenne['moyenne'] ? round($moyenne['moyenne'], 1) : 0;
+$total_avis = $moyenne['total'] ? $moyenne['total'] : 0;
+
+// Vérifier si le parent peut noter
+$nbAvisParent = $avisManager->getNombreAvisParent($parent_id, $repetiteur_id);
+$peut_noter = ($nbAvisParent < 5);
+
 // Exemple de données récupérées après inscription
 $nom = $_SESSION['nom'];
 $prenom = $_SESSION['prenom'];
-
-// On prend la première lettre du prénom et du nom
 $initiales = strtoupper(substr($prenom, 0, 1) . substr($nom, 0, 1));
 ?>
 
@@ -81,6 +173,49 @@ $initiales = strtoupper(substr($prenom, 0, 1) . substr($nom, 0, 1));
         .card:hover {
             transform: translateY(-2px);
         }
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+        .star-rating input {
+            display: none;
+        }
+        .star-rating label {
+            cursor: pointer;
+            font-size: 24px;
+            color: #d1d5db;
+            transition: color 0.2s;
+        }
+        .star-rating input:checked ~ label,
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #fbbf24;
+        }
+        .star-rating input:checked + label {
+            color: #fbbf24;
+        }
+        .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .star-filled {
+            color: #fbbf24;
+        }
+        .star-empty {
+            color: #d1d5db;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -98,6 +233,8 @@ $initiales = strtoupper(substr($prenom, 0, 1) . substr($nom, 0, 1));
     </header>
 
     <main class="container mx-auto px-4 py-20 mt-16">
+        <?php echo $message_avis; ?>
+        
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Sidebar avec informations principales -->
             <div class="lg:col-span-1">
@@ -116,17 +253,40 @@ $initiales = strtoupper(substr($prenom, 0, 1) . substr($nom, 0, 1));
                         <h1 class="text-2xl font-bold"><?php echo htmlspecialchars($repetiteur['prenom'] . ' ' . $repetiteur['nom']); ?></h1>
                         <p class="text-gray-600"><?php echo htmlspecialchars($repetiteur['filiere']); ?></p>
                         <div class="flex items-center mt-2">
-                            <!-- Étoiles -->
+                            <!-- Étoiles dynamiques -->
                             <div class="flex items-center gap-1 mt-1">
-                                <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="CurrentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 极l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118极1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.极-3.57z"/></svg>
-                                <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 极00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0极-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.极4 2.21a1 1 0 00-.365 1.118l1.16 3.57c极02.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
+                                <?php
+                                for ($i = 1; $i <= 5; $i++) {
+                                    if ($i <= floor($note_moyenne)) {
+                                        echo '<svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>';
+                                    } else {
+                                        echo '<svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>';
+                                    }
+                                }
+                                ?>
                             </div>
-                            <span class="ml-2 text-gray-600">4.0 (12 avis)</span>
+                            <span class="ml-2 text-gray-600"><?php echo $note_moyenne; ?> (<?php echo $total_avis; ?> avis)</span>
                         </div>
                     </div>
+
+                    <!-- Formulaire d'avis (seulement si le parent peut noter) -->
+                    <?php if ($peut_noter): ?>
+                    <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                        <h3 class="font-semibold mb-3">Donner votre avis</h3>
+                        <form method="post" class="space-y-3">
+                            <div class="star-rating">
+                                <?php for ($i = 5; $i >= 1; $i--): ?>
+                                    <input type="radio" id="star<?php echo $i; ?>" name="note" value="<?php echo $i; ?>" />
+                                    <label for="star<?php echo $i; ?>">★</label>
+                                <?php endfor; ?>
+                            </div>
+                            <textarea name="commentaire" placeholder="Votre commentaire..." class="w-full border rounded p-2 text-sm" rows="3" required></textarea>
+                            <button type="submit" name="submit_avis" class="w-full bg-[#2B80F6] text-white py-2 rounded hover:bg-blue-700 transition">
+                                Publier l'avis
+                            </button>
+                        </form>
+                    </div>
+                    <?php endif; ?>
 
                     <div class="space-y-4">
                         <div>
@@ -292,52 +452,81 @@ $initiales = strtoupper(substr($prenom, 0, 1) . substr($nom, 0, 1));
                     </p>
                 </div>
 
-                <!-- Section Avis -->
+                <!-- Section Avis dynamique -->
                 <div class="bg-white rounded-xl shadow-lg p-6 card">
-                    <h2 class="text-xl font-bold mb-4">Avis (12)</h2>
-                    <div class="space-y-4">
-                        <div class="border-b pb-4">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h3 class="font-semibold">Marie K.</h3>
-                                    <!-- Étoiles -->
-                                    <div class="flex items-center gap-1 mt-1">
-                                        <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 极 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                        <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.极6 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                        <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69极3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                        <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 极0" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                        <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
+                    <h2 class="text-xl font-bold mb-4">Avis (<?php echo $total_avis; ?>)</h2>
+                    
+                    <?php if (count($avis) > 0): ?>
+                        <div class="space-y-4">
+                            <?php foreach ($avis as $avis_item): ?>
+                                <div class="border-b pb-4">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-semibold">
+                                                <?php echo htmlspecialchars($avis_item['parent_prenom'] . ' ' . substr($avis_item['parent_nom'], 0, 1) . '.'); ?>
+                                            </h3>
+                                            <!-- Étoiles dynamiques pour chaque avis -->
+                                            <div class="flex items-center gap-1 mt-1">
+                                                <?php
+                                                for ($i = 1; $i <= 5; $i++) {
+                                                    if ($i <= $avis_item['note']) {
+                                                        echo '<svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>';
+                                                    } else {
+                                                        echo '<svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>';
+                                                    }
+                                                }
+                                                ?>
+                                            </div>
+                                        </div>
+                                        <span class="text-sm text-gray-500">
+                                            <?php
+                                            $date_avis = new DateTime($avis_item['date_creation']);
+                                            $aujourdhui = new DateTime();
+                                            $difference = $date_avis->diff($aujourdhui);
+                                            
+                                            if ($difference->y > 0) {
+                                                echo 'Il y a ' . $difference->y . ' an' . ($difference->y > 1 ? 's' : '');
+                                            } elseif ($difference->m > 0) {
+                                                echo 'Il y a ' . $difference->m . ' mois';
+                                            } elseif ($difference->d > 0) {
+                                                echo 'Il y a ' . $difference->d . ' jour' . ($difference->d > 1 ? 's' : '');
+                                            } else {
+                                                echo 'Aujourd\'hui';
+                                            }
+                                            ?>
+                                        </span>
                                     </div>
+                                    <p class="mt-2 text-gray-700"><?php echo nl2br(htmlspecialchars($avis_item['commentaire'])); ?></p>
                                 </div>
-                                <span class="text-sm text-gray-500">Il y a 2 semaines</span>
-                            </div>
-                            <p class="mt-2 text-gray-700">Koffi a redonné confiance à ma fille. Ses explications sont claires et il est très ponctuel. Je le recommande vivement !</p>
+                            <?php endforeach; ?>
                         </div>
-                        <div class="border-b pb-4">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h3 class="font-semibold">Paul A.</h3>
-                                    <!-- Étoiles -->
-                                    <div class="flex items-center gap-1 mt-1">
-                                        <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 极.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0极-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                        <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.极39-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                        <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0极1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 极00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                        <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927极.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                        <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.极1a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57极"/></svg>
-                                    </div>
-                                </div>
-                                <span class="text-sm text-gray-500">Il y a 1 mois</span>
-                            </div>
-                            <p class="mt-2 text-gray-700">Mon fils a progressé de 3 points en maths depuis qu'il travaille avec Koffi. Très professionnel.</p>
-                        </div>
-                    </div>
-                    <button class="mt-4 text-blue-600 font-semibold flex items-center">
-                        Voir tous les avis <i class="fas fa-arrow-right ml-2"></i>
-                    </button>
+                    <?php else: ?>
+                        <p class="text-gray-500 text-center py-4">Aucun avis pour le moment.</p>
+                    <?php endif; ?>
+                    
+                    <?php if ($total_avis > 2): ?>
+                        <button class="mt-4 text-blue-600 font-semibold flex items-center">
+                            Voir tous les avis <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </main>
+
+    <script>
+        // Script pour le système de notation par étoiles
+        document.addEventListener('DOMContentLoaded', function() {
+            const stars = document.querySelectorAll('.star-rating label');
+            
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = this.htmlFor.replace('star', '');
+                    // Vous pouvez ajouter ici un feedback visuel supplémentaire
+                });
+            });
+        });
+    </script>
 
     <script src="Scripts/script.js"></script>
 </body>

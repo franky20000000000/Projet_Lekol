@@ -1,51 +1,6 @@
 // Avis management functionality
 const Avis = {
-    data: [
-        {
-            id: 1,
-            repetiteur: 'Marie Dubois',
-            parent: 'Pierre Dupont',
-            note: 5,
-            commentaire: 'Excellente répétitrice, très pédagogue avec ma fille. Les explications sont claires et les progrès visibles rapidement.',
-            date: '2024-01-18',
-            statut: 'approuvé',
-            matiere: 'Mathématiques',
-            reponseRepetiteur: null
-        },
-        {
-            id: 2,
-            repetiteur: 'Jean Martin',
-            parent: 'Isabelle Martin',
-            note: 4,
-            commentaire: 'Bon répétiteur, ponctuel et sérieux. Mon fils a bien progressé en français.',
-            date: '2024-01-17',
-            statut: 'en_attente',
-            matiere: 'Français',
-            reponseRepetiteur: null
-        },
-        {
-            id: 3,
-            repetiteur: 'Sophie Bernard',
-            parent: 'Thomas Bernard',
-            note: 2,
-            commentaire: 'Répétitrice souvent en retard, méthodes pas adaptées à mon enfant. Pas satisfait du service.',
-            date: '2024-01-16',
-            statut: 'signalé',
-            matiere: 'Anglais',
-            reponseRepetiteur: 'Je suis désolée pour ces désagréments. J\'ai eu quelques problèmes personnels récents mais c\'est maintenant résolu.'
-        },
-        {
-            id: 4,
-            repetiteur: 'Marie Dubois',
-            parent: 'Sophie Laurent',
-            note: 5,
-            commentaire: 'Parfait ! Ma fille adore ses cours et ses notes s\'améliorent semaine après semaine.',
-            date: '2024-01-15',
-            statut: 'approuvé',
-            matiere: 'Mathématiques',
-            reponseRepetiteur: 'Merci beaucoup ! C\'est un plaisir d\'accompagner votre fille dans sa réussite.'
-        }
-    ],
+    data: [],
     
     filteredData: [],
     currentFilter: {
@@ -57,9 +12,29 @@ const Avis = {
     init() {
         this.render();
         this.bindEvents();
-        this.filteredData = [...this.data];
-        this.renderAvis();
-        this.loadStats();
+        this.fetch();
+    },
+
+    fetch() {
+        apiGet('list_avis').then(res => {
+            if (res && res.success) {
+                const items = (res.data && res.data.items) || [];
+                // Mapper vers le format attendu par le rendu
+                this.data = items.map(a => ({
+                    id: a.id,
+                    repetiteur: `${a.rep_prenom || ''} ${a.rep_nom || ''}`.trim() || `Répétiteur #${a.repetiteur_id}`,
+                    parent: `${a.parent_prenom || ''} ${a.parent_nom || ''}`.trim() || `Parent #${a.parent_id}`,
+                    note: a.note,
+                    commentaire: a.commentaire,
+                    date: a.date_creation,
+                    statut: a.statut === 'approuve' ? 'approuvé' : (a.statut || 'en_attente'),
+                    matiere: ''
+                }));
+                this.filteredData = [...this.data];
+                this.renderAvis();
+                this.loadStats();
+            }
+        }).catch(()=>{});
     },
     
     render() {
@@ -192,10 +167,15 @@ const Avis = {
     },
     
     loadStats() {
-        const noteMoyenne = this.data.reduce((sum, avis) => sum + avis.note, 0) / this.data.length;
+        if (this.data.length === 0) {
+            document.getElementById('stat-note-moyenne').textContent = '0.0';
+            document.getElementById('stat-en-attente').textContent = '0';
+            document.getElementById('stat-signales').textContent = '0';
+            return;
+        }
+        const noteMoyenne = this.data.reduce((sum, avis) => sum + (parseInt(avis.note, 10) || 0), 0) / this.data.length;
         const enAttente = this.data.filter(a => a.statut === 'en_attente').length;
         const signales = this.data.filter(a => a.statut === 'signalé').length;
-        
         document.getElementById('stat-note-moyenne').textContent = noteMoyenne.toFixed(1);
         document.getElementById('stat-en-attente').textContent = enAttente;
         document.getElementById('stat-signales').textContent = signales;
@@ -444,32 +424,33 @@ const Avis = {
     },
     
     approveAvis(id) {
-        const formData = { avis_id: id, statut: 'approuvé' };
-        
-        // This would be sent to PHP endpoint: admin/avis/update-status.php
-        submitForm(formData, 'admin/avis/update-status.php', () => {
-            const index = this.data.findIndex(a => a.id === id);
-            if (index !== -1) {
-                this.data[index].statut = 'approuvé';
+        const payload = { id, statut: 'approuve' };
+        apiPost('update_avis_statut', payload).then(res => {
+            if (res && res.success) {
+                const i = this.data.findIndex(a => a.id === id);
+                if (i !== -1) this.data[i].statut = 'approuvé';
                 this.applyFilters();
                 this.loadStats();
+                showToast('Avis approuvé');
+            } else {
+                showToast((res && res.message) || 'Erreur', 'error');
             }
-        });
+        }).catch(()=> showToast('Erreur connexion', 'error'));
     },
     
     hideAvis(id) {
-        if (confirm('Masquer cet avis ?')) {
-            const formData = { avis_id: id, statut: 'masqué' };
-            
-            // This would be sent to PHP endpoint: admin/avis/update-status.php
-            submitForm(formData, 'admin/avis/update-status.php', () => {
-                const index = this.data.findIndex(a => a.id === id);
-                if (index !== -1) {
-                    this.data[index].statut = 'masqué';
-                    this.applyFilters();
-                    this.loadStats();
-                }
-            });
-        }
+        if (!confirm('Masquer cet avis ?')) return;
+        const payload = { id, statut: 'rejete' };
+        apiPost('update_avis_statut', payload).then(res => {
+            if (res && res.success) {
+                const i = this.data.findIndex(a => a.id === id);
+                if (i !== -1) this.data[i].statut = 'masqué';
+                this.applyFilters();
+                this.loadStats();
+                showToast('Avis masqué');
+            } else {
+                showToast((res && res.message) || 'Erreur', 'error');
+            }
+        }).catch(()=> showToast('Erreur connexion', 'error'));
     }
 };

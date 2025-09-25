@@ -40,7 +40,7 @@ if(!isset($_SESSION['id'])){
         // On prend la première lettre du prénom et du nom
         $initiales = strtoupper(substr($prenom, 0, 1) . substr($nom, 0, 1));
         ?>
-        <a href="ProfilParent.php">
+        <a class="focus-none hover:scale-105 transition-all duration-300" href="ProfilParent.php">
             <div class="w-10 h-10 cursor-pointer rounded-full bg-[#2B80F6] text-white flex items-center relative right-[3rem] justify-center text-xl font-bold shadow-lg">
             <?php echo $initiales; ?>
         </div>

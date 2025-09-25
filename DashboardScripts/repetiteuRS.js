@@ -1,93 +1,9 @@
 // Répétiteurs management functionality
 const Repetiteurs = {
-    data: [
-        {
-            id: 1,
-            nom: 'Marie Dubois',
-            email: 'marie.dubois@email.com',
-            telephone: '0123456789',
-            statut: 'actif',
-            abonnement: 'premium',
-            notemoyenne: 4.8,
-            matiere: 'Mathématiques',
-            niveau: 'Lycée',
-            dateInscription: '2024-01-15',
-            derniereConnexion: '2024-01-20'
-        },
-        {
-            id: 2,
-            nom: 'Jean Martin',
-            email: 'jean.martin@email.com',
-            telephone: '0123456790',
-            statut: 'inactif',
-            abonnement: 'basique',
-            notemoyenne: 4.2,
-            matiere: 'Français',
-            niveau: 'Collège',
-            dateInscription: '2024-01-10',
-            derniereConnexion: '2024-01-18'
-        },
-        {
-            id: 3,
-            nom: 'Sophie Bernard',
-            email: 'sophie.bernard@email.com',
-            telephone: '0123456791',
-            statut: 'suspendu',
-            abonnement: 'premium',
-            notemoyenne: 3.9,
-            matiere: 'Anglais',
-            niveau: 'Primaire',
-            dateInscription: '2024-01-05',
-            derniereConnexion: '2024-01-19'
-        }
-    ],
+    data: [],
     
     // Données pour les demandes de validation
-    demandesValidation: [
-        {
-            id: 1001,
-            nom: 'Dupont',
-            prenom: 'Paul',
-            email: 'paul.dupont@email.com',
-            telephone: '0612345678',
-            dateNaissance: '1995-05-15',
-            adresse: '12 Rue des Écoles, 75005 Paris',
-            diplomes: [
-                { nom: 'Master Mathématiques', fichier: 'diplome_math.pdf' },
-                { nom: 'Licence Physique', fichier: 'diplome_physique.pdf' }
-            ],
-            piecesIdentite: [
-                { type: 'Carte d\'identité', fichier: 'ci_paul_dupont.pdf' },
-                { type: 'Justificatif de domicile', fichier: 'domicile_paul.pdf' }
-            ],
-            matiere: 'Mathématiques',
-            niveau: 'Lycée',
-            experience: '5 ans',
-            dateDemande: '2024-01-25',
-            statut: 'en_attente'
-        },
-        {
-            id: 1002,
-            nom: 'Martin',
-            prenom: 'Julie',
-            email: 'julie.martin@email.com',
-            telephone: '0698765432',
-            dateNaissance: '1992-08-22',
-            adresse: '45 Avenue Victor Hugo, 75016 Paris',
-            diplomes: [
-                { nom: 'Doctorat Chimie', fichier: 'diplome_chimie.pdf' }
-            ],
-            piecesIdentite: [
-                { type: 'Passeport', fichier: 'passeport_julie.pdf' }
-            ],
-            matiere: 'Chimie',
-            niveau: 'Université',
-            experience: '8 ans',
-            dateDemande: '2024-01-24',
-            statut: 'en_attente',
-            complementDemande: 'Veuillez fournir votre attestation d\'assurance responsabilité civile.'
-        }
-    ],
+    demandesValidation: [],
     
     filteredData: [],
     currentFilter: {
@@ -98,8 +14,7 @@ const Repetiteurs = {
     init() {
         this.render();
         this.bindEvents();
-        this.filteredData = [...this.data];
-        this.renderTable();
+        this.fetchList();
         this.renderValidationTable();
     },
     
@@ -248,18 +163,31 @@ const Repetiteurs = {
         });
     },
     
+    fetchList() {
+        const params = {};
+        if (this.currentFilter.search) params.search = this.currentFilter.search;
+        if (this.currentFilter.statut && this.currentFilter.statut !== 'tous') params.statut = this.currentFilter.statut;
+        apiGet('list_repetiteurs', params).then(res => {
+            if (res && res.success) {
+                this.data = (res.data && res.data.items) || [];
+                this.filteredData = [...this.data];
+                this.renderTable();
+                this.updateCount();
+            }
+        }).catch(()=>{});
+    },
+
     applyFilters() {
+        const search = (this.currentFilter.search || '').toLowerCase();
         this.filteredData = this.data.filter(repetiteur => {
-            const matchesSearch = this.currentFilter.search === '' || 
-                repetiteur.nom.toLowerCase().includes(this.currentFilter.search.toLowerCase()) ||
-                repetiteur.email.toLowerCase().includes(this.currentFilter.search.toLowerCase());
-            
-            const matchesStatut = this.currentFilter.statut === 'tous' || 
-                repetiteur.statut === this.currentFilter.statut;
-            
+            const matchesSearch = search === '' || 
+                (repetiteur.nom && repetiteur.nom.toLowerCase().includes(search)) ||
+                (repetiteur.prenom && repetiteur.prenom.toLowerCase().includes(search)) ||
+                (repetiteur.email && repetiteur.email.toLowerCase().includes(search));
+            // statut placeholder (si vous ajoutez la colonne côté BD)
+            const matchesStatut = this.currentFilter.statut === 'tous' || true;
             return matchesSearch && matchesStatut;
         });
-        
         this.renderTable();
         this.updateCount();
     },
@@ -533,6 +461,29 @@ const Repetiteurs = {
         // Simulation d'envoi au serveur
         console.log('Envoi des données à', url, data);
         setTimeout(callback, 500);
+    },
+
+    toggleStatus(id, statut) {
+        apiPost('update_repetiteur_statut', { id, statut }).then(res => {
+            if (res && res.success) {
+                showToast(res.message || 'Statut mis à jour');
+                this.fetchList();
+            } else {
+                showToast((res && res.message) || 'Erreur mise à jour', 'error');
+            }
+        }).catch(()=> showToast('Erreur connexion', 'error'));
+    },
+
+    deleteRepetiteur(id) {
+        if (!confirm('Supprimer ce répétiteur ?')) return;
+        apiPost('delete_repetiteur', { id }).then(res => {
+            if (res && res.success) {
+                showToast('Répétiteur supprimé');
+                this.fetchList();
+            } else {
+                showToast((res && res.message) || 'Erreur suppression', 'error');
+            }
+        }).catch(()=> showToast('Erreur connexion', 'error'));
     },
     
     // Les autres méthodes existantes (showDetailModal, showEditModal, etc.) restent inchangées

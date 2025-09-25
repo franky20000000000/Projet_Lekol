@@ -1,64 +1,7 @@
 // Fonctionnalité de gestion des abonnements
 const Abonnements = {
     // Données des abonnements
-    data: [
-        {
-            id: 1,
-            repetiteur_id: 1,
-            repetiteur_nom: 'Marie Dubois',
-            repetiteur_email: 'marie.dubois@email.com',
-            repetiteur_telephone: '+237 612345678',
-            type: 'Mensuel',
-            prix: 15000,
-            devise: 'FCFA',
-            date_debut: '2024-01-01',
-            date_fin: '2024-02-01',
-            statut: 'payé',
-            methode_paiement: 'Mobile Money'
-        },
-        {
-            id: 2,
-            repetiteur_id: 2,
-            repetiteur_nom: 'Jean Martin',
-            repetiteur_email: 'jean.martin@email.com',
-            repetiteur_telephone: '+237 677889900',
-            type: 'Trimestriel',
-            prix: 40000,
-            devise: 'FCFA',
-            date_debut: '2024-01-15',
-            date_fin: '2024-04-15',
-            statut: 'payé',
-            methode_paiement: 'Carte bancaire'
-        },
-        {
-            id: 3,
-            repetiteur_id: 3,
-            repetiteur_nom: 'Sophie Bernard',
-            repetiteur_email: 'sophie.bernard@email.com',
-            repetiteur_telephone: '+237 655443322',
-            type: 'Mensuel',
-            prix: 15000,
-            devise: 'FCFA',
-            date_debut: '2023-12-01',
-            date_fin: '2024-01-01',
-            statut: 'expiré',
-            methode_paiement: 'Mobile Money'
-        },
-        {
-            id: 4,
-            repetiteur_id: 4,
-            repetiteur_nom: 'Paul Atreides',
-            repetiteur_email: 'paul.atreides@email.com',
-            repetiteur_telephone: '+237 699887766',
-            type: 'Mensuel',
-            prix: 15000,
-            devise: 'FCFA',
-            date_debut: '2024-02-01',
-            date_fin: '2024-03-01',
-            statut: 'en attente',
-            methode_paiement: 'Mobile Money'
-        }
-    ],
+    data: [],
     
     // Données filtrées pour l'affichage
     filteredData: [],
@@ -73,7 +16,13 @@ const Abonnements = {
     init() {
         this.render();
         this.bindEvents();
-        this.filteredData = [...this.data];
+        this.fetch();
+    },
+
+    fetch() {
+        // TODO: brancher à un endpoint (ex: list_abonnements) quand disponible
+        this.data = [];
+        this.filteredData = [];
         this.renderTable();
         this.loadStats();
     },
@@ -214,7 +163,7 @@ const Abonnements = {
         
         // Mettre à jour l'affichage des statistiques
         document.getElementById('stat-actifs').textContent = actifs;
-        document.getElementById('stat-revenus').textContent = `${revenus.toLocaleString()} FCFA`;
+        document.getElementById('stat-revenus').textContent = `${(revenus||0).toLocaleString()} FCFA`;
         document.getElementById('stat-expire-bientot').textContent = expireBientot;
     },
     

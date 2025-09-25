@@ -75,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Modifier mes informations</title>
+    <link rel="stylesheet" href="style.css">
     <script src="Scripts/tailwindcss.js"></script>
 </head>
 <body class="bg-gray-100 flex justify-center items-center min-h-screen">

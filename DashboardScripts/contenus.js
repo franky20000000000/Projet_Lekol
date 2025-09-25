@@ -1,46 +1,6 @@
 // Contenus management functionality
 const Contenus = {
-    data: [
-        {
-            id: 1,
-            titre: 'Cours de Mathématiques - Fonctions',
-            description: 'Cours complet sur les fonctions pour les élèves de Première',
-            type: 'pdf',
-            matiere: 'Mathématiques',
-            niveau: 'Première',
-            taille: '2.5 MB',
-            dateCreation: '2024-01-15',
-            auteur: 'Marie Dubois',
-            telechargements: 45,
-            statut: 'publié'
-        },
-        {
-            id: 2,
-            titre: 'Exercices de Français - Analyse littéraire',
-            description: 'Série d\'exercices sur l\'analyse littéraire avec corrigés',
-            type: 'pdf',
-            matiere: 'Français',
-            niveau: 'Terminale',
-            taille: '1.8 MB',
-            dateCreation: '2024-01-12',
-            auteur: 'Jean Martin',
-            telechargements: 32,
-            statut: 'publié'
-        },
-        {
-            id: 3,
-            titre: 'Vidéo - Expérience de Chimie',
-            description: 'Démonstration pratique d\'une expérience de chimie organique',
-            type: 'video',
-            matiere: 'Sciences',
-            niveau: 'Terminale',
-            taille: '15.2 MB',
-            dateCreation: '2024-01-10',
-            auteur: 'Sophie Bernard',
-            telechargements: 18,
-            statut: 'brouillon'
-        }
-    ],
+    data: [],
     
     filteredData: [],
     currentFilter: {
@@ -52,7 +12,13 @@ const Contenus = {
     init() {
         this.render();
         this.bindEvents();
-        this.filteredData = [...this.data];
+        this.fetch();
+    },
+
+    fetch() {
+        // TODO: brancher à un endpoint (ex: list_contenus) quand disponible
+        this.data = [];
+        this.filteredData = [];
         this.renderTable();
         this.loadStats();
     },
@@ -199,7 +165,7 @@ const Contenus = {
     },
     
     loadStats() {
-        const totalDownloads = this.data.reduce((total, contenu) => total + contenu.telechargements, 0);
+        const totalDownloads = this.data.reduce((total, contenu) => total + (contenu.telechargements||0), 0);
         const publies = this.data.filter(c => c.statut === 'publié').length;
         const brouillons = this.data.filter(c => c.statut === 'brouillon').length;
         

@@ -26,6 +26,23 @@ if(!isset($_SESSION['id'])){
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="overflow-x-hidden">
+    <?php
+    // Chargement des répétiteurs pour le carrousel (utilisateur connecté)
+    $host = "localhost";
+    $dbname = "lekol";
+    $username = "root";
+    $password = "";
+    $repetiteursAccueil = [];
+    try {
+        $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $stmt = $pdo->prepare("SELECT id, nom, prenom, matieres, description, piece_identite FROM repetiteur ORDER BY id DESC LIMIT 12");
+        $stmt->execute();
+        $repetiteursAccueil = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        // silencieux
+    }
+    ?>
    <!------------------------------------ entete ------------------------------------>
         <header id="navbar" class="fixed flex md:justify-around justify-between z-50 items-center p-4 shadow-[0_0.5px_6px_rgba(0,0,0,0.1)] w-full text-xl">
             <div>
@@ -57,7 +74,7 @@ if(!isset($_SESSION['id'])){
             $initiales = strtoupper(substr($prenom, 0, 1) . substr($nom, 0, 1));
             ?>
             
-            <a href="<?php echo $lien_profil; ?>">
+            <a class="focus-none hover:scale-105 transition-all duration-300" href="<?php echo $lien_profil; ?>">
                 <div class="w-10 h-10 cursor-pointer rounded-full bg-[#2B80F6] text-white flex items-center relative right-[3rem] justify-center text-xl font-bold shadow-lg">
                     <?php echo $initiales; ?>
                 </div>
@@ -86,7 +103,7 @@ if(!isset($_SESSION['id'])){
             <h1 class="font-bold md:text-6xl mt-10 text-4xl mb-10">Répétiteurs à <br> portée de clic </h1>
             <p class="md:text-xl text-justify mt-10">
             <span class="text-[#2B80F6]">Lékol</span> est une plateforme qui connecte les <br>
-            parents d’élèves et étudiants pour un <br>
+            parents d'élèves et étudiants pour un <br>
             accompagnement scolaire personnalisé.
             </p>
             <p class="text-3xl pt-[3rem] text-semibold"><span class="text-[#2B80F6]">Bienvenue </span><?php echo $prenom ?>  <br> <?php echo $nom ?> </p>
@@ -148,7 +165,7 @@ if(!isset($_SESSION['id'])){
         <!------------------------------- section 4 ------------------------------------------->
         <section data-aos="fade-up" class="relative w-full max-w-7xl mx-auto mt-16 px-4">
             <div class="flex w-full justify-end pb-2 font-bold relative right-5">
-                <a href="Repetiteurs.php">Voir Plus ></a>
+                <a href="Repetiteurs2.php">Voir Plus ></a>
             </div>
         <!-- Bouton gauche -->
     <button type="button" id="carouselPrev"
@@ -160,292 +177,42 @@ if(!isset($_SESSION['id'])){
 
         <!-- Fenêtre du carrousel -->
     <div class="overflow-hidden">
-        <!-- Piste du carrousel (c’est elle qui se déplace) -->
+        <!-- Piste du carrousel (c'est elle qui se déplace) -->
         <div id="carouselTrack" class="flex transition-transform duration-500 ease-out">
-
-        <!-- ===== Slide 1 ===== -->
+            <?php $slides = array_chunk($repetiteursAccueil, 4); if (!empty($slides)) { foreach ($slides as $slide) { ?>
         <div class="shrink-0 w-full grid grid-cols-1 sm:grid-cols-2 gap-6 px-4">
-            <!-- Carte 1 -->
-            <a class="no-hover" href="ProfilRepetiteur.php">
+                <?php foreach ($slide as $rep) { ?>
+                <a class="no-hover" href="ProfilRepetiteurPublic.php?id=<?php echo (int)$rep['id']; ?>">
                 <article class="bg-gray-100 rounded-2xl p-6">
             <div class="flex items-center gap-4">
                 <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
+                                <?php if (!empty($rep['piece_identite'])) { ?>
+                                    <img src="<?php echo htmlspecialchars($rep['piece_identite']); ?>" alt="photo profil" class="w-full h-full object-cover">
+                                <?php } else { ?>
                 <img src="Images/student-7378903_1920.jpg" alt="photo profil" class="w-full h-full object-cover">
+                                <?php } ?>
                 </div>
                 <div class="min-w-0">
-                <h3 class="text-2xl font-semibold leading-tight">Lamine Yamal</h3>
-
-                <!-- Étoiles -->
+                                <h3 class="text-2xl font-semibold leading-tight"><?php echo htmlspecialchars($rep['prenom'].' '.$rep['nom']); ?></h3>
                 <div class="flex items-center gap-1 mt-1">
                     <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
                     <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
                     <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
                     <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
+                                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302 .907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785 .539-1.841-.211-1.54-1.118l1.16-3.57z"/></svg>
                 </div>
-                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
+                                <p class="text-sm text-gray-600 mt-1"><?php echo htmlspecialchars($rep['matieres'] ?? ''); ?></p>
                 </div>
             </div>
-            <p class="text-sm text-gray-700 mt-4">
-                Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete
-            </p>
+                        <p class="text-sm text-gray-700 mt-4"><?php echo htmlspecialchars($rep['description'] ?? ''); ?></p>
             </article>
             </a>
-
-            <!-- Carte 2 -->
-            <article class="bg-gray-100 rounded-2xl p-6">
-            <div class="flex items-center gap-4">
-                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
-                <img src="Images/student-7378903_1920.jpg" alt="photo profil" class="w-full h-full object-cover">
-                </div>
-                <div class="min-w-0">
-                <h3 class="text-2xl font-semibold leading-tight">Lamine Yamal</h3>
-                <!-- Étoiles -->
-                <div class="flex items-center gap-1 mt-1">
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                </div>
-                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
-                </div>
+                <?php } ?>
             </div>
-            <p class="text-sm text-gray-700 mt-4">Je suis étudiant en génie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
-            </article>
-
-            <!-- Carte 3 -->
-            <article class="bg-gray-100 rounded-2xl p-6">
-            <div class="flex items-center gap-4">
-                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
-                <img src="Images/student-7378903_1920.jpg" alt="photo profil" class="w-full h-full object-cover">
-                </div>
-                <div class="min-w-0">
-                <h3 class="text-2xl font-semibold leading-tight">Lamine Yamal</h3>
-                <!-- Étoiles -->
-                <div class="flex items-center gap-1 mt-1">
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                </div>
-                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
-                </div>
-            </div>
-            <p class="text-sm text-gray-700 mt-4">Je suis étudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
-            </article>
-
-            <!-- Carte 4 -->
-            <article class="bg-gray-100 rounded-2xl p-6">
-            <div class="flex items-center gap-4">
-                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
-                <img src="Images/student-7378903_1920.jpg" alt="photo profil" class="w-full h-full object-cover">
-                </div>
-                <div class="min-w-0">
-                <h3 class="text-2xl font-semibold leading-tight">Bryan Ntuchamo</h3>
-                <!-- Étoiles -->
-                <div class="flex items-center gap-1 mt-1">
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                </div>
-                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
-                </div>
-            </div>
-            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
-            </article>
+            <?php } } ?>
         </div>
 
-        <!-- ===== Slide 2 ===== -->
-        <div class="shrink-0 w-full grid grid-cols-1 sm:grid-cols-2 gap-6 px-4">
-            <!-- 4 cartes (duplique/édite le contenu selon tes besoins) -->
-            <article class="bg-gray-100 rounded-2xl p-6">
-            <div class="flex items-center gap-4">
-                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
-                <img src="Images/student-7378903_1920.jpg" alt="" class="w-full h-full object-cover">
-                </div>
-                <div class="min-w-0">
-                <h3 class="text-2xl font-semibold">Lamine Yamal</h3>
-                <!-- Étoiles -->
-                <div class="flex items-center gap-1 mt-1">
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                </div>
-                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
-                </div>
-            </div>
-            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
-            </article>
-            <article class="bg-gray-100 rounded-2xl p-6">
-            <div class="flex items-center gap-4">
-                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
-                <img src="Images/student-7378903_1920.jpg" alt="" class="w-full h-full object-cover">
-                </div>
-                <div class="min-w-0">
-                <h3 class="text-2xl font-semibold">Lamine Yamal</h3>
-                <!-- Étoiles -->
-                <div class="flex items-center gap-1 mt-1">
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                </div>
-                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
-                </div>
-            </div>
-            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
-            </article>
-            <article class="bg-gray-100 rounded-2xl p-6">
-            <div class="flex items-center gap-4">
-                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
-                <img src="Images/student-7378903_1920.jpg" alt="" class="w-full h-full object-cover">
-                </div>
-                <div class="min-w-0">
-                <h3 class="text-2xl font-semibold">Lamine Yamal</h3>
-                <!-- Étoiles -->
-                <div class="flex items-center gap-1 mt-1">
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                </div>
-                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
-                </div>
-            </div>
-            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
-            </article>
-            <article class="bg-gray-100 rounded-2xl p-6">
-            <div class="flex items-center gap-4">
-                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
-                <img src="Images/student-7378903_1920.jpg" alt="" class="w-full h-full object-cover">
-                </div>
-                <div class="min-w-0">
-                <h3 class="text-2xl font-semibold">Bryan Ntuchamo</h3>
-                <!-- Étoiles -->
-                <div class="flex items-center gap-1 mt-1">
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                </div>
-                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
-                </div>
-            </div>
-            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
-            </article>
-        </div>
-
-        <!-- ===== Slide 3 ===== -->
-         <div class="shrink-0 w-full grid grid-cols-1 sm:grid-cols-2 gap-6 px-4">
-            <!-- 4 cartes (duplique/édite le contenu selon tes besoins) -->
-            <article class="bg-gray-100 rounded-2xl p-6">
-            <div class="flex items-center gap-4">
-                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
-                <img src="Images/student-7378903_1920.jpg" alt="" class="w-full h-full object-cover">
-                </div>
-                <div class="min-w-0">
-                <h3 class="text-2xl font-semibold">Lamine Yamal</h3>
-                <!-- Étoiles -->
-                <div class="flex items-center gap-1 mt-1">
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                </div>
-                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
-                </div>
-            </div>
-            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
-            </article>
-            <article class="bg-gray-100 rounded-2xl p-6">
-            <div class="flex items-center gap-4">
-                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
-                <img src="Images/student-7378903_1920.jpg" alt="" class="w-full h-full object-cover">
-                </div>
-                <div class="min-w-0">
-                <h3 class="text-2xl font-semibold">Lamine Yamal</h3>
-                <!-- Étoiles -->
-                <div class="flex items-center gap-1 mt-1">
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                </div>
-                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
-                </div>
-            </div>
-            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
-            </article>
-            <article class="bg-gray-100 rounded-2xl p-6">
-            <div class="flex items-center gap-4">
-                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
-                <img src="Images/student-7378903_1920.jpg" alt="" class="w-full h-full object-cover">
-                </div>
-                <div class="min-w-0">
-                <h3 class="text-2xl font-semibold">Lamine Yamal</h3>
-                <!-- Étoiles -->
-                <div class="flex items-center gap-1 mt-1">
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                </div>
-                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
-                </div>
-            </div>
-            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
-            </article>
-            <article class="bg-gray-100 rounded-2xl p-6">
-            <div class="flex items-center gap-4">
-                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
-                <img src="Images/student-7378903_1920.jpg" alt="" class="w-full h-full object-cover">
-                </div>
-                <div class="min-w-0">
-                <h3 class="text-2xl font-semibold">Bryan Ntuchamo</h3>
-                <!-- Étoiles -->
-                <div class="flex items-center gap-1 mt-1">
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                </div>
-                <p class="text-sm text-gray-600 mt-1">Maths - Physique - Chimie</p>
-                </div>
-            </div>
-            <p class="text-sm text-gray-700 mt-4">Je suis etudiant en genie logiciel a l’IAI Cameroun niveau 2, je suis tres assidu, respectueux et honnete</p>
-            </article>
-        </div>
-
-        <!-- ===== Slide 4 ===== -->
-        <div class="shrink-0 w-full grid grid-cols-1 sm:grid-cols-2 gap-6 px-4">
-            <article class="bg-gray-100 rounded-2xl p-6"><!-- 4 cartes --></article>
-            <article class="bg-gray-100 rounded-2xl p-6"></article>
-            <article class="bg-gray-100 rounded-2xl p-6"></article>
-            <article class="bg-gray-100 rounded-2xl p-6"></article>
-        </div>
-
-        <!-- ===== Slide 5 ===== -->
-        <div class="shrink-0 w-full grid grid-cols-1 sm:grid-cols-2 gap-6 px-4">
-            <article class="bg-gray-100 rounded-2xl p-6"><!-- 4 cartes --></article>
-            <article class="bg-gray-100 rounded-2xl p-6"></article>
-            <article class="bg-gray-100 rounded-2xl p-6"></article>
-            <article class="bg-gray-100 rounded-2xl p-6"></article>
-        </div>
-        </div>
-    </div>
+        
 
     <!-- Bouton droite -->
     <button type="button" id="carouselNext"
@@ -457,74 +224,113 @@ if(!isset($_SESSION['id'])){
 
     <!-- Indicateurs -->
     <div id="carouselDots" class="flex justify-center mt-6 gap-2">
-        <button type="button" class="h-3 w-3 rounded-full bg-[#2B80F6]" aria-label="Aller au slide 1"></button>
-        <button type="button" class="h-3 w-3 rounded-full bg-gray-300" aria-label="Aller au slide 2"></button>
-        <button type="button" class="h-3 w-3 rounded-full bg-gray-300" aria-label="Aller au slide 3"></button>
-        <button type="button" class="h-3 w-3 rounded-full bg-gray-300" aria-label="Aller au slide 4"></button>
-        <button type="button" class="h-3 w-3 rounded-full bg-gray-300" aria-label="Aller au slide 5"></button>
+        <?php $numSlides = (int)ceil(count($repetiteursAccueil) / 4); if ($numSlides > 0) { for ($i = 0; $i < $numSlides; $i++) { ?>
+            <button type="button" class="h-3 w-3 rounded-full <?php echo $i === 0 ? 'bg-[#2B80F6]' : 'bg-gray-300'; ?>" aria-label="Aller au slide <?php echo $i + 1; ?>"></button>
+        <?php } } ?>
     </div>
+    <script>
+    (function(){
+        const track = document.getElementById('carouselTrack');
+        const dotsContainer = document.getElementById('carouselDots');
+        if (!track || !dotsContainer) return;
+        const dots = Array.from(dotsContainer.querySelectorAll('button'));
+        const prev = document.getElementById('carouselPrev');
+        const next = document.getElementById('carouselNext');
+        const numSlides = dots.length;
+        let current = 0;
+        function update(){
+            track.style.transform = 'translateX(-' + (current * 100) + '%)';
+            dots.forEach((b, i) => {
+                if (i === current) { b.classList.remove('bg-gray-300'); b.classList.add('bg-[#2B80F6]'); }
+                else { b.classList.add('bg-gray-300'); b.classList.remove('bg-[#2B80F6]'); }
+            });
+        }
+        dots.forEach((b, i) => b.addEventListener('click', () => { current = i; update(); }));
+        if (prev) prev.addEventListener('click', () => { current = Math.max(0, current - 1); update(); });
+        if (next) next.addEventListener('click', () => { current = Math.min(numSlides - 1, current + 1); update(); });
+    })();
+    </script>
 </section>
 
 <!------------------------------- section 5 ------------------------------------------->
-<section data-aos="fade-up" class="w-full flex flex-col mt-[65px] items-center">
-    <h1 class="md:text-6xl text-[2rem] font-bold"><span class="text-[#2B80F6]">Pourquoi</span> nous choisir ?</h1>
-    <div class=" mt-10 md:grid grid-cols-3 md:gap-4 flex flex-col gap-4 justify-center items-center mx-4 md:mx-20 ">
-        <div class="h-[16rem] w-auto bg-gray-200 rounded-xl">
-            <img class="absolute mt-5 ml-5 bg-[#cccccc] p-3 rounded-md" src="Images/map-pin.png" alt="">
-            <div class="relative flex flex-col items-center top-20">
-                <h1 class="text-3xl font-bold/2 mb-5 text-[#2B80F6]">Proximité</h1>
-                <p class="relative px-5 text-justify">Découvrez et contactez facilement des répétiteurs qualifiés près de chez vous, 
-                     pour un accompagnement personnalisé et efficace.</p>
+<section data-aos="fade-up" class="w-full mt-[65px] px-4 md:px-20">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-12">
+            <h1 class="md:text-6xl text-[2rem] font-bold"><span class="text-[#2B80F6]">Pourquoi</span> nous choisir?</h1>
+            <p class="mt-3 text-gray-600 max-w-2xl mx-auto">Des atouts concrets pour vous accompagner, avec simplicité, transparence et efficacité.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <article class="group rounded-2xl p-6 bg-white/70 backdrop-blur shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1" role="article" aria-label="Proximité">
+                <div class="flex items-start gap-4">
+                    <div class="shrink-0 h-12 w-12 rounded-xl bg-purple-50 flex items-center justify-center ring-1 ring-purple-100">
+                        <img class="h-6 w-6" src="Images/map-pin.png" alt="Icône Proximité">
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">Proximité</h3>
+                        <p class="mt-1 text-gray-600">Trouvez rapidement des répétiteurs qualifiés près de chez vous pour un accompagnement personnalisé.</p>
+                    </div>
+                </div>
+            </article>
+            <article class="group rounded-2xl p-6 bg-white/70 backdrop-blur shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1" role="article" aria-label="Profils vérifiés">
+                <div class="flex items-start gap-4">
+                    <div class="shrink-0 h-12 w-12 rounded-xl bg-purple-50 flex items-center justify-center ring-1 ring-purple-100">
+                        <img class="h-6 w-6" src="Images/circle-check.png" alt="Icône Profils vérifiés">
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">Profils vérifiés</h3>
+                        <p class="mt-1 text-gray-600">Documents et identités contrôlés pour garantir sérieux, transparence et fiabilité.</p>
             </div>
         </div>
-
-        <div class="h-[16rem] w-auto bg-gray-200 rounded-xl">
-            <img class="absolute mt-5 ml-5 bg-[#cccccc] p-3 rounded-md" src="Images/circle-check.png" alt="">
-            <div class="relative flex flex-col items-center top-20">
-                <h1 class="text-3xl font-bold/2 mb-5 text-[#2B80F6]">Profils verifiés</h1>
-                <p class="relative text-justify px-5">Les étudiants sont rigoureusement identifiés grâce à leurs pièces d’identité et documents 
-                    justificatifs, garantissant sérieux, transparence et fiabilité.</p>
+            </article>
+            <article class="group rounded-2xl p-6 bg-white/70 backdrop-blur shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1" role="article" aria-label="Contact rapide">
+                <div class="flex items-start gap-4">
+                    <div class="shrink-0 h-12 w-12 rounded-xl bg-purple-50 flex items-center justify-center ring-1 ring-purple-100">
+                        <img class="h-6 w-6" src="Images/phone.png" alt="Icône Contact rapide">
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">Contact rapide</h3>
+                        <p class="mt-1 text-gray-600">Un clic suffit pour joindre un répétiteur par appel ou WhatsApp.</p>
             </div>
         </div>
-
-        <div class="h-[16rem] w-auto bg-gray-200 rounded-xl">
-            <img class="absolute mt-5 ml-5 bg-[#cccccc] p-3 rounded-md" src="Images/phone.png" alt="">
-            <div class="relative flex flex-col items-center top-20">
-                <h1 class="text-3xl font-bold/2 mb-5 text-[#2B80F6]">Contact rapide</h1>
-                <p class="relative px-5 text-justify">Les parents peuvent facilement entrer en contact avec les répétiteurs par appel téléphonique ou message WhatsApp, 
-                    pour une communication rapide et directe.</p>
+            </article>
+            <article class="group rounded-2xl p-6 bg-white/70 backdrop-blur shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1" role="article" aria-label="Anciens sujets">
+                <div class="flex items-start gap-4">
+                    <div class="shrink-0 h-12 w-12 rounded-xl bg-purple-50 flex items-center justify-center ring-1 ring-purple-100">
+                        <img class="h-6 w-6" src="Images/file-text.png" alt="Icône Anciens sujets">
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">Anciens sujets</h3>
+                        <p class="mt-1 text-gray-600">Accès aux sujets et corrigés des examens nationaux pour booster vos révisions.</p>
             </div>
         </div>
-
-        <div class="h-[16rem] w-auto bg-gray-200 rounded-xl">
-            <img class="absolute mt-5 ml-5 bg-[#cccccc] p-3 rounded-md" src="Images/file-text.png" alt="">
-            <div class="relative flex flex-col items-center top-20">
-                <h1 class="text-3xl font-bold/2 mb-5 text-[#2B80F6]">Anciens sujets </h1>
-                <p class="relative px-5 text-justify">Accédez aux anciens sujets et corrigés détaillés des derniers examens nationaux, un atout essentiel 
-                    pour réussir vos révisions.</p>
+            </article>
+            <article class="group rounded-2xl p-6 bg-white/70 backdrop-blur shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1" role="article" aria-label="Avis et évaluations">
+                <div class="flex items-start gap-4">
+                    <div class="shrink-0 h-12 w-12 rounded-xl bg-purple-50 flex items-center justify-center ring-1 ring-purple-100">
+                        <img class="h-6 w-6" src="Images/star.png" alt="Icône Avis">
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">Avis et évaluations</h3>
+                        <p class="mt-1 text-gray-600">Des retours authentiques pour choisir en toute confiance.</p>
             </div>
         </div>
-
-        <div class="h-[16rem] w-auto bg-gray-200 rounded-xl">
-            <img class="absolute mt-5 ml-5 bg-[#cccccc] p-3 rounded-md" src="Images/star.png" alt="">
-            <div class="relative flex flex-col items-center top-20">
-                <h1 class="text-3xl font-bold/2 mb-5 text-[#2B80F6]">Avis et évaluations</h1>
-                <p class="relative px-5 text-justify">Les parents partagent des avis constructifs et utiles sur les étudiants, offrant ainsi transparence, confiance 
-                    et gage de qualité pédagogique.</p>
+            </article>
+            <article class="group rounded-2xl p-6 bg-white/70 backdrop-blur shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1" role="article" aria-label="Revenus">
+                <div class="flex items-start gap-4">
+                    <div class="shrink-0 h-12 w-12 rounded-xl bg-purple-50 flex items-center justify-center ring-1 ring-purple-100">
+                        <img class="h-6 w-6" src="Images/map-pin.png" alt="Icône Revenus">
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">Revenus</h3>
+                        <p class="mt-1 text-gray-600">Valorisez vos compétences et générez des revenus en toute simplicité.</p>
+                    </div>
             </div>
-        </div>
-
-        <div class="h-[16rem] w-auto bg-gray-200 rounded-xl">
-            <img class="absolute mt-5 ml-5 bg-[#cccccc] p-3 rounded-md" src="Images/map-pin.png" alt="">
-            <div class="relative flex flex-col items-center top-20">
-                <h1 class="text-3xl font-bold/2 mb-5 text-[#2B80F6]">Revenus</h1>
-                <p class="relative px-5 text-justify">Les répétiteurs transforment leurs compétences en véritable source de revenus, gagnant de l’argent facilement tout en aidant activement les éleves</p>
-            </div>
+            </article>
         </div>
     </div>
 </section>
 
-<!------------------------------- section 5 ------------------------------------------->
+<!------------------------------- section 6 ------------------------------------------->
 <section data-aos="fade-up" class="flex flex-col mt-[65px] items-center justify-center">
     <h1 class="md:text-6xl text-[2rem] font-bold"><span class="text-[#2B80F6]">Anciens</span> sujets & corrigés</h1>
     <p class="my-5 text-center">Prépare toi efficacement aux différents examens.</p>
@@ -545,7 +351,7 @@ if(!isset($_SESSION['id'])){
     <button class="relative -top-10 bg-[#2B80F6] p-2 rounded-lg -mt-20 text-white md:mt-20 mt-5 text-xl px-5 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-[#2B80F6]-400/50">Explorer tous les sujets</button>
 </section>
 
-<!------------------------------- section 6 ------------------------------------------->
+<!------------------------------- section 7 ------------------------------------------->
 <section data-aos="fade-up" class="relative w-full flex justify-center items-center py-12 px-4 bg-white">
   <div class="md:mr-20 md:ml-20 mx-4 w-full relative overflow-hidden">
     
@@ -558,11 +364,11 @@ if(!isset($_SESSION['id'])){
           <img src="Images/ai-generated-9010550_1920.png" alt="profile" class="w-24 h-24 rounded-full object-cover">
           <div class="flex-1 text-center sm:text-left">
             <h3 class="text-xl font-bold">Nickolo Barella</h3>
-            <p class="text-gray-600 mb-4">Parent d’élève</p>
-            <p class="text-gray-800 mb-4">“Grâce à cette plateforme, j’ai trouvé une étudiante sérieuse et compétente pour accompagner ma fille en mathématiques.
+            <p class="text-gray-600 mb-4">Parent d'élève</p>
+            <p class="text-gray-800 mb-4">"Grâce à cette plateforme, j'ai trouvé une étudiante sérieuse et compétente pour accompagner ma fille en mathématiques.
  Elle avait de grosses difficultés et refusait même de réviser. Après quelques séances, elle a repris confiance et ses notes
- ont nettement augmenté. J’ai aussi apprécié la possibilité de suivre les séances directement depuis mon compte.
- C’est simple, rassurant, et très efficace !”</p>
+ ont nettement augmenté. J'ai aussi apprécié la possibilité de suivre les séances directement depuis mon compte.
+ C'est simple, rassurant, et très efficace !"</p>
             <!-- Stars -->
             <div class="flex justify-center sm:justify-start">
               <span class="text-yellow-400 text-2xl">★</span>
@@ -581,11 +387,11 @@ if(!isset($_SESSION['id'])){
           <img src="Images/ai-generated-9010550_1920.png" alt="profile" class="w-24 h-24 rounded-full object-cover">
           <div class="flex-1 text-center sm:text-left">
             <h3 class="text-xl font-bold">Nickolo Barella</h3>
-            <p class="text-gray-600 mb-4">Parent d’élève</p>
-            <p class="text-gray-800 mb-4">“Grâce à cette plateforme, j’ai trouvé une étudiante sérieuse et compétente pour accompagner ma fille en mathématiques.
+            <p class="text-gray-600 mb-4">Parent d'élève</p>
+            <p class="text-gray-800 mb-4">"Grâce à cette plateforme, j'ai trouvé une étudiante sérieuse et compétente pour accompagner ma fille en mathématiques.
  Elle avait de grosses difficultés et refusait même de réviser. Après quelques séances, elle a repris confiance et ses notes
- ont nettement augmenté. J’ai aussi apprécié la possibilité de suivre les séances directement depuis mon compte.
- C’est simple, rassurant, et très efficace !”</p>
+ ont nettement augmenté. J'ai aussi apprécié la possibilité de suivre les séances directement depuis mon compte.
+ C'est simple, rassurant, et très efficace !"</p>
             <!-- Stars -->
             <div class="flex justify-center sm:justify-start">
               <span class="text-yellow-400 text-2xl">★</span>
@@ -604,11 +410,11 @@ if(!isset($_SESSION['id'])){
           <img src="Images/ai-generated-9010550_1920.png" alt="profile" class="w-24 h-24 rounded-full object-cover">
           <div class="flex-1 text-center sm:text-left">
             <h3 class="text-xl font-bold">Nickolo Barella</h3>
-            <p class="text-gray-600 mb-4">Parent d’élève</p>
-            <p class="text-gray-800 mb-4">“Grâce à cette plateforme, j’ai trouvé une étudiante sérieuse et compétente pour accompagner ma fille en mathématiques.
+            <p class="text-gray-600 mb-4">Parent d'élève</p>
+            <p class="text-gray-800 mb-4">"Grâce à cette plateforme, j'ai trouvé une étudiante sérieuse et compétente pour accompagner ma fille en mathématiques.
  Elle avait de grosses difficultés et refusait même de réviser. Après quelques séances, elle a repris confiance et ses notes
- ont nettement augmenté. J’ai aussi apprécié la possibilité de suivre les séances directement depuis mon compte.
- C’est simple, rassurant, et très efficace !”</p>
+ ont nettement augmenté. J'ai aussi apprécié la possibilité de suivre les séances directement depuis mon compte.
+ C'est simple, rassurant, et très efficace !"</p>
             <!-- Stars -->
             <div class="flex justify-center sm:justify-start">
               <span class="text-yellow-400 text-2xl">★</span>
@@ -627,11 +433,11 @@ if(!isset($_SESSION['id'])){
           <img src="Images/ai-generated-9010550_1920.png" alt="profile" class="w-24 h-24 rounded-full object-cover">
           <div class="flex-1 text-center sm:text-left">
             <h3 class="text-xl font-bold">Nickolo Barella</h3>
-            <p class="text-gray-600 mb-4">Parent d’élève</p>
-            <p class="text-gray-800 mb-4">“Grâce à cette plateforme, j’ai trouvé une étudiante sérieuse et compétente pour accompagner ma fille en mathématiques.
+            <p class="text-gray-600 mb-4">Parent d'élève</p>
+            <p class="text-gray-800 mb-4">"Grâce à cette plateforme, j'ai trouvé une étudiante sérieuse et compétente pour accompagner ma fille en mathématiques.
  Elle avait de grosses difficultés et refusait même de réviser. Après quelques séances, elle a repris confiance et ses notes
- ont nettement augmenté. J’ai aussi apprécié la possibilité de suivre les séances directement depuis mon compte.
- C’est simple, rassurant, et très efficace !”</p>
+ ont nettement augmenté. J'ai aussi apprécié la possibilité de suivre les séances directement depuis mon compte.
+ C'est simple, rassurant, et très efficace !"</p>
             <!-- Stars -->
             <div class="flex justify-center sm:justify-start">
               <span class="text-yellow-400 text-2xl">★</span>
@@ -650,11 +456,11 @@ if(!isset($_SESSION['id'])){
           <img src="Images/ai-generated-9010550_1920.png" alt="profile" class="w-24 h-24 rounded-full object-cover">
           <div class="flex-1 text-center sm:text-left">
             <h3 class="text-xl font-bold">Nickolo Barella</h3>
-            <p class="text-gray-600 mb-4">Parent d’élève</p>
-            <p class="text-gray-800 mb-4">“Grâce à cette plateforme, j’ai trouvé une étudiante sérieuse et compétente pour accompagner ma fille en mathématiques.
+            <p class="text-gray-600 mb-4">Parent d'élève</p>
+            <p class="text-gray-800 mb-4">"Grâce à cette plateforme, j'ai trouvé une étudiante sérieuse et compétente pour accompagner ma fille en mathématiques.
  Elle avait de grosses difficultés et refusait même de réviser. Après quelques séances, elle a repris confiance et ses notes
- ont nettement augmenté. J’ai aussi apprécié la possibilité de suivre les séances directement depuis mon compte.
- C’est simple, rassurant, et très efficace !”</p>
+ ont nettement augmenté. J'ai aussi apprécié la possibilité de suivre les séances directement depuis mon compte.
+ C'est simple, rassurant, et très efficace !"</p>
             <!-- Stars -->
             <div class="flex justify-center sm:justify-start">
               <span class="text-yellow-400 text-2xl">★</span>
@@ -691,7 +497,7 @@ if(!isset($_SESSION['id'])){
 </section>
 
 
-<!------------------------------- section 7 ------------------------------------------->
+<!------------------------------- section 8 ------------------------------------------->
 <footer class="relative bg-black text-white overflow-hidden min-h-80">  
         <!-- Contenu principal -->
         <div class="relative z-10 container mx-auto px-8 py-10">
@@ -807,7 +613,7 @@ if(!isset($_SESSION['id'])){
     <script>
         AOS.init({
         duration: 1000,   // durée de l'animation en ms
-        once: false,      // rejoue l’animation à chaque descente
+        once: false,      // rejoue l'animation à chaque descente
         mirror: false     // pas d'animation quand on remonte
         });
     </script>

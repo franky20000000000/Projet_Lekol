@@ -142,42 +142,68 @@ function showToast(message, type = 'success') {
 
 // Form submission handler ready for PHP integration
 function submitForm(formData, endpoint, successCallback) {
-    // This function is ready for PHP integration
-    // For now, it will simulate the request
-    console.log('Form data to be sent to:', endpoint, formData);
-    
-    // Simulate AJAX request
-    setTimeout(() => {
-        if (successCallback) {
-            successCallback();
+    const mapEndpointToAction = (url) => {
+        if (url.includes('avis/update-status')) return { action: 'update_avis_statut', map: (d) => ({ id: d.avis_id, statut: d.statut }) };
+        if (url.includes('repetiteurs/valider')) return { action: 'update_repetiteur_statut', map: (d) => ({ id: d.demande_id, statut: 'actif' }) };
+        if (url.includes('repetiteurs/rejeter')) return { action: 'update_repetiteur_statut', map: (d) => ({ id: d.demande_id, statut: 'rejete' }) };
+        if (url.includes('repetiteurs/complements')) return { action: 'noop', map: (d) => d };
+        if (url.includes('contenus/create')) return { action: 'noop', map: (d) => d };
+        if (url.includes('contenus/update')) return { action: 'noop', map: (d) => d };
+        if (url.includes('contenus/delete')) return { action: 'noop', map: (d) => d };
+        if (url.includes('parametres/update-general')) return { action: 'noop', map: (d) => d };
+        return { action: 'noop', map: (d) => d };
+    };
+
+    try {
+        const { action, map } = mapEndpointToAction(endpoint || '');
+        const payload = map(formData || {});
+        if (action === 'noop') {
+            // Pas d’action serveur encore – succès immédiat
+            if (successCallback) successCallback({});
+            showToast('Opération réussie');
+            return;
         }
-        showToast('Opération réussie');
-    }, 1000);
-    
-    // Real implementation would be:
-    /*
-    fetch(endpoint, {
+        fetch(`admin_api.php?action=${encodeURIComponent(action)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data && data.success) {
+                if (successCallback) successCallback(data);
+                showToast(data.message || 'Opération réussie');
+            } else {
+                showToast((data && data.message) || 'Erreur lors de l\'opération', 'error');
+            }
+        })
+        .catch(err => {
+            console.error('Erreur requête:', err);
+            showToast('Erreur de connexion', 'error');
+        });
+    } catch (e) {
+        console.error(e);
+        showToast('Erreur interne', 'error');
+    }
+}
+
+// Helpers API simples
+function apiGet(action, params = {}) {
+    const qs = new URLSearchParams({ action, ...params }).toString();
+    return fetch(`admin_api.php?${qs}`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    }).then(r => r.json());
+}
+
+function apiPost(action, data = {}) {
+    return fetch(`admin_api.php?action=${encodeURIComponent(action)}`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            if (successCallback) successCallback(data);
-            showToast(data.message || 'Opération réussie');
-        } else {
-            showToast(data.message || 'Erreur lors de l\'opération', 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showToast('Erreur de connexion', 'error');
-    });
-    */
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify(data)
+    }).then(r => r.json());
 }
 
 // Initialize app when DOM is loaded
