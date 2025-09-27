@@ -88,11 +88,11 @@ $avisManager = new AvisManager($pdo);
 // Traitement du formulaire d'avis
 $message_avis = '';
 if ($_POST && isset($_POST['submit_avis'])) {
-    $note = filter_var($_POST['note'], FILTER_VALIDATE_INT, [
+    $note = isset($_POST['note']) ? filter_var($_POST['note'], FILTER_VALIDATE_INT, [
         'options' => ['min_range' => 1, 'max_range' => 5]
-    ]);
+    ]) : null;
     
-    $commentaire = htmlspecialchars(trim($_POST['commentaire']));
+    $commentaire = htmlspecialchars(trim($_POST['commentaire'] ?? ''));
     
     if ($note && !empty($commentaire)) {
         // Autoriser jusqu'à 5 avis par parent pour ce répétiteur
@@ -241,8 +241,8 @@ $initiales = strtoupper(substr($prenom, 0, 1) . substr($nom, 0, 1));
                 <div class="bg-white rounded-xl shadow-lg p-6 sticky top-24">
                     <div class="flex flex-col items-center mb-6">
                         <div class="relative mb-4">
-                            <?php if (!empty($repetiteur['piece_identite'])): ?>
-                                <img src="<?php echo htmlspecialchars($repetiteur['piece_identite']); ?>" 
+                            <?php if (!empty($repetiteur['photo_profil'])): ?>
+                                <img src="<?php echo htmlspecialchars($repetiteur['photo_profil']); ?>" 
                                      alt="Photo de profil" class="w-32 h-32 rounded-full object-cover border-4 border-white shadow">
                             <?php else: ?>
                                 <img src="Images/student-7378903_1920.jpg" 
@@ -260,7 +260,7 @@ $initiales = strtoupper(substr($prenom, 0, 1) . substr($nom, 0, 1));
                                     if ($i <= floor($note_moyenne)) {
                                         echo '<svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>';
                                     } else {
-                                        echo '<svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>';
+                                        echo '<svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04-2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>';
                                     }
                                 }
                                 ?>
@@ -470,9 +470,9 @@ $initiales = strtoupper(substr($prenom, 0, 1) . substr($nom, 0, 1));
                                                 <?php
                                                 for ($i = 1; $i <= 5; $i++) {
                                                     if ($i <= $avis_item['note']) {
-                                                        echo '<svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>';
+                                                        echo '<svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04-2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>';
                                                     } else {
-                                                        echo '<svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>';
+                                                        echo '<svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04-2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>';
                                                     }
                                                 }
                                                 ?>

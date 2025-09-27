@@ -31,8 +31,8 @@ function validateForm() {
     }
     
     if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-        password.hidden = false;
-        password.textContent = 'Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre';
+        passwordError.hidden = false;
+        passwordError.textContent = 'Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre';
         return false;
     }
     
@@ -46,8 +46,8 @@ function validateForm() {
     // Validation téléphone (format Cameroun)
     const phoneRegex = /^(\+237)[\s-]?[6-9][0-9]{2}[\s-]?[0-9]{2}[\s-]?[0-9]{2}[\s-]?[0-9]{2}$/;
     if (!phoneRegex.test(telephone)) {
-        phoneError.style = 'block'
-        phoneError.innerHTML = 'Format de téléphone invalide. Exemple: +237 694210071';
+        phoneError.hidden = false;
+        phoneError.textContent = 'Format de téléphone invalide. Exemple: +237 694210071';
         return false;
     }
     

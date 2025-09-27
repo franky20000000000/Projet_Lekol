@@ -55,7 +55,7 @@ if(!$parent){
             <div class="flex items-center gap-3">
                 <span class="hidden md:block text-sm text-gray-600">Bonjour, <?php echo htmlspecialchars($parent['prenom']); ?></span>
                 <div class="w-10 h-10 rounded-full bg-[#2B80F6] flex items-center justify-center text-white font-semibold shadow-md" aria-hidden="true">
-                    <?php echo strtoupper(substr($parent['prenom'],0,1)) . strtoupper(substr($parent['nom'],0,1)); ?>
+            <?php echo strtoupper(substr($parent['prenom'],0,1)) . strtoupper(substr($parent['nom'],0,1)); ?>
                 </div>
             </div>
         </div>
@@ -122,6 +122,11 @@ if(!$parent){
                             </div>
                             <?php endif; ?>
                         </div>
+
+                        <!-- Helpful tip card -->
+                        <div class="mt-6 p-4 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100">
+                            <p class="text-sm text-blue-700"><i class="fa-regular fa-circle-check mr-2"></i>Assurez-vous que vos coordonnées sont à jour pour être contacté facilement.</p>
+                        </div>
                     </div>
                 </section>
             </aside>
@@ -167,7 +172,7 @@ if(!$parent){
                     <div class="p-6 border-b border-gray-100 flex items-center justify-between">
                         <h2 class="text-lg font-semibold">Répétiteurs contactés</h2>
                         <a href="Repetiteurs.php" class="text-sm text-[#2B80F6] hover:underline">Trouver un répétiteur</a>
-                    </div>
+                                </div>
                     <div class="p-6">
                         <div class="rounded-2xl border border-dashed border-gray-200 p-8 text-center bg-gray-50">
                             <div class="mx-auto w-12 h-12 rounded-full bg-white shadow flex items-center justify-center text-[#2B80F6] mb-3">
@@ -185,7 +190,7 @@ if(!$parent){
 
                 <!-- Paramètres -->
                 <section class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100">
-                    <div class="p-6">
+                <div class="p-6">
                         <h2 class="text-lg font-semibold mb-4">Paramètres du compte</h2>
                         <div class="grid sm:grid-cols-2 gap-3">
                             <a href="ModifParent.php" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50">
@@ -197,7 +202,7 @@ if(!$parent){
                                 <span>Se déconnecter</span>
                             </a>
                         </div>
-                    </div>
+                   </div>
                 </section>
             </div>
         </div>

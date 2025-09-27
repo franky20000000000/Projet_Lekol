@@ -30,8 +30,8 @@ if(!isset($_SESSION['id'])){
             <p class="text-[#2B80F6] font-bold text-3xl">Lékol</p>
         </div>
         <div class="md:flex gap-5 hidden">
-            <a class="transition-all duration-300 ease-in-out active" href="index2.php">Accueil</a>
-            <a class="transition-all duration-300 ease-in-out" href="">A Propos</a>
+            <a class="transition-all duration-300 ease-in-out" href="index2.php">Accueil</a>
+            <a class="transition-all duration-300 ease-in-out active" href="">A Propos</a>
             <a class="transition-all duration-300 ease-in-out" href="Repetiteurs2.php">Répétiteurs</a>
             <a class="transition-all duration-300 ease-in-out" href="AnciensSujets2.php">Anciens sujets</a>
             <a class="transition-all duration-300 ease-in-out" href="Contact2.php">Contact</a>

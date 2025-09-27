@@ -154,22 +154,27 @@ $initiales = strtoupper(substr($prenom, 0, 1) . substr($nom, 0, 1));
                 <label for="filter-matiere" class="block text-sm font-medium text-gray-700 mb-1">Matière</label>
                 <select id="filter-matiere" name="matiere" class="px-4 py-2 w-full border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2B80F6]">
                     <option value="">Toutes les matières</option>
-                    <option value="maths" <?php echo $matiere === 'maths' ? 'selected' : ''; ?>>Mathématiques</option>
+                    <option value="mathematiques" <?php echo $matiere === 'mathematiques' ? 'selected' : ''; ?>>Mathématiques</option>
                     <option value="physique" <?php echo $matiere === 'physique' ? 'selected' : ''; ?>>Physique</option>
                     <option value="chimie" <?php echo $matiere === 'chimie' ? 'selected' : ''; ?>>Chimie</option>
-                    <option value="francais" <?php echo $matiere === 'francais' ? 'selected' : ''; ?>>Français</option>
+                    <option value="svt" <?php echo $matiere === 'svt' ? 'selected' : ''; ?>>SVT</option>
+                    <option value="informatique" <?php echo $matiere === 'informatique' ? 'selected' : ''; ?>>Informatique</option>
+                    <option value="litterature" <?php echo $matiere === 'litterature' ? 'selected' : ''; ?>>Littérature</option>
+                    <option value="langues" <?php echo $matiere === 'langues' ? 'selected' : ''; ?>>Langues</option>
                     <option value="anglais" <?php echo $matiere === 'anglais' ? 'selected' : ''; ?>>Anglais</option>
+                    <option value="philosophie" <?php echo $matiere === 'philosophie' ? 'selected' : ''; ?>>Philosophie</option>
                 </select>
             </div>
 
             <div>
-                <label for="filter-niveau" class="block text-sm font-medium text-gray-700 mb-1">Niveau</label>
+                <label for="filter-niveau" class="block text-sm font-medium text-gray-700 mb-1">Niveau d'études</label>
                 <select id="filter-niveau" name="niveau" class="px-4 py-2 w-full border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2B80F6]">
                     <option value="">Tous les niveaux</option>
-                    <option value="primaire" <?php echo $niveau === 'primaire' ? 'selected' : ''; ?>>Primaire</option>
-                    <option value="secondaire-1er-cycle" <?php echo $niveau === 'secondaire-1er-cycle' ? 'selected' : ''; ?>>Secondaire (1er Cycle)</option>
-                    <option value="secondaire-2eme-cycle" <?php echo $niveau === 'secondaire-2eme-cycle' ? 'selected' : ''; ?>>Secondaire (2ème Cycle)</option>
-                    <option value="superieur" <?php echo $niveau === 'superieur' ? 'selected' : ''; ?>>Supérieur</option>
+                    <option value="nouveau-bachelier" <?php echo $niveau === 'nouveau-bachelier' ? 'selected' : ''; ?>>Nouveau bachelier</option>
+                    <option value="etudiant-bts" <?php echo $niveau === 'etudiant-bts' ? 'selected' : ''; ?>>Étudiant en cycle BTS</option>
+                    <option value="etudiant-licence" <?php echo $niveau === 'etudiant-licence' ? 'selected' : ''; ?>>Étudiant en cycle licence</option>
+                    <option value="etudiant-master" <?php echo $niveau === 'etudiant-master' ? 'selected' : ''; ?>>Étudiant en cycle Master</option>
+                    <option value="autre" <?php echo $niveau === 'autre' ? 'selected' : ''; ?>>Autre</option>
                 </select>
             </div>
             
@@ -187,7 +192,7 @@ $initiales = strtoupper(substr($prenom, 0, 1) . substr($nom, 0, 1));
                 <button type="submit" class="w-full px-4 py-2 text-white bg-[#2B80F6] rounded-lg hover:bg-opacity-90 transition-colors">
                     Rechercher
                 </button>
-                <a href="Repetiteurs.php" class="w-full px-4 py-2 text-center text-[#2B80F6] border border-[#2B80F6] rounded-lg hover:bg-[#2B80F6] hover:text-white transition-colors">
+                <a href="Repetiteurs2.php" class="w-full px-4 py-2 text-center text-[#2B80F6] border border-[#2B80F6] rounded-lg hover:bg-[#2B80F6] hover:text-white transition-colors">
                     Réinitialiser
                 </a>
             </div>
@@ -195,56 +200,19 @@ $initiales = strtoupper(substr($prenom, 0, 1) . substr($nom, 0, 1));
     </div>
 
     <section id="repetiteurs-container" class="pt-[7rem] md:mx-20 mx-5 grid md:grid-cols-2 grid-cols-1 gap-4 top-[8rem] h-auto">
-        <?php if (count($repetiteurs) > 0): ?>
-            <?php foreach ($repetiteurs as $repetiteur): ?>
-                <article class="bg-gray-100 rounded-2xl p-6">
-                    <a href="ProfilRepetiteurPublic.php?id=<?php echo $repetiteur['id']; ?>">
-                        <div class="flex items-center gap-4">
-                            <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
-                                <?php if (!empty($repetiteur['piece_identite'])): ?>
-                                    <img src="<?php echo htmlspecialchars($repetiteur['piece_identite']); ?>" alt="photo profil" class="w-full h-full object-cover">
-                                <?php else: ?>
-                                    <img src="Images/student-7378903_1920.jpg" alt="photo profil" class="w-full h-full object-cover">
-                                <?php endif; ?>
-                            </div>
-                            <div class="min-w-0">
-                                <h3 class="text-2xl font-semibold leading-tight"><?php echo htmlspecialchars($repetiteur['prenom'] . ' ' . $repetiteur['nom']); ?></h3>
-
-                                <!-- Étoiles (à remplacer par un système de notation réel si disponible) -->
-                                <div class="flex items-center gap-1 mt-1">
-                                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.907 1.602-.907 1.902 0l1.16 3.57a1 1 0 00.95.69h3.756c.97 0 1.372 1.24.589 1.81l-3.04 2.21a1 1 0 00-.365 1.118l1.16 3.57c.302.907-.754 1.657-1.54 1.118l-3.04-2.21a1 1 0 00-1.176 0l-3.04 2.21c-.785.539-1.841-.211-1.54-1.118l1.16-3.57a1 1 0 00-.364-1.118l-3.04-2.21c-.783-.57-.38-1.81.588-1.81h3.756a1 1 0 00.95-.69l1.16-3.57z"/></svg>
-                                </div>
-                                <p class="text-sm text-gray-600 mt-1"><?php echo htmlspecialchars($repetiteur['matieres']); ?></p>
-                            </div>
-                        </div>
-                        <p class="text-sm text-gray-700 mt-4">
-                            <?php echo htmlspecialchars($repetiteur['description']); ?>
-                        </p>
-                    </a>
-                </article>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <div class="col-span-2 text-center py-10">
-                <p class="text-gray-500 text-lg">Aucun répétiteur trouvé avec ces critères de recherche.</p>
-            </div>
-        <?php endif; ?>
+        <!-- Les résultats seront chargés dynamiquement via JavaScript -->
+        <div class="col-span-2 text-center py-10">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2B80F6]"></div>
+            <p class="text-gray-500 text-lg mt-2">Chargement des répétiteurs...</p>
+        </div>
     </section>
 
-    <?php if ($total_pages > 1 && $page < $total_pages): ?>
-    <div class="flex justify-center mt-6 mb-6">
-        <a href="Repetiteurs.php?<?php 
-            echo http_build_query(array_merge($_GET, ['page' => $page + 1]));
-        ?>" class="bg-[#2B80F6] p-2 px-5 rounded-lg text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-[#2B80F6]-400/50">
-            Voir plus
-        </a>
+    <div class="pagination-container">
+        <!-- La pagination sera gérée dynamiquement via JavaScript -->
     </div>
-    <?php endif; ?>
 
     <script src="Scripts/script.js"></script>
     <script src="Scripts/tailwindcss.js"></script>
+    <script src="Scripts/Recherche.js"></script>
 </body>
 </html>

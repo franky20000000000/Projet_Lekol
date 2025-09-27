@@ -195,23 +195,23 @@
                         Liens rapides
                     </h3>
                     <div class="space-y-4">
-                        <a href="#" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
+                        <a href="index.php" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
                             <i class="fas fa-home text-blue-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
                             <span class="group-hover:font-semibold">Accueil</span>
                         </a>
-                        <a href="#" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
+                        <a href="About.php" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
                             <i class="fas fa-info-circle text-blue-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
                             <span class="group-hover:font-semibold">À propos</span>
                         </a>
-                        <a href="#" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
+                        <a href="Repetiteurs.php" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
                             <i class="fas fa-chalkboard-teacher text-blue-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
                             <span class="group-hover:font-semibold">Répétiteurs</span>
                         </a>
-                        <a href="#" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
+                        <a href="AnciensSujets.php" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
                             <i class="fas fa-file-alt text-blue-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
                             <span class="group-hover:font-semibold">Anciens sujets</span>
                         </a>
-                        <a href="#" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
+                        <a href="Contact.php" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
                             <i class="fas fa-envelope text-blue-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
                             <span class="group-hover:font-semibold">Contact</span>
                         </a>

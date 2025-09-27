@@ -39,6 +39,13 @@ try {
         $stmtCheck = $pdo->prepare('SELECT motDePasse FROM administrateur WHERE email = ?');
         $stmtCheck->execute(['admin@lekol.local']);
         $existingHash = $stmtCheck->fetchColumn();
+        
+        // Remplacer str_starts_with() par une alternative compatible PHP < 8.0
+        if ($existingHash && substr($existingHash, 0, 4) !== '$2y$') {
+            $correctHash = password_hash('Admin123!', PASSWORD_DEFAULT);
+            $stmtUpdate = $pdo->prepare('UPDATE administrateur SET motDePasse = ? WHERE email = ?');
+            $stmtUpdate->execute([$correctHash, 'admin@lekol.local']);
+        }
     }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -74,12 +81,12 @@ try {
         body { visibility: visible !important; }
     </style>
 </head>
-<body class="flex justify-center items-center min-h-screen bg-gray-50">
+<body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
     <div class="w-full max-w-md">
-        <form method="POST" class="flex bg-white shadow-lg flex-col gap-5 my-10 h-auto w-auto p-10 rounded-xl px-4">
+        <form method="post" class="bg-white p-8 rounded-xl shadow-lg border border-gray-100 space-y-6">
             <div class="space-y-1">
-                <h2 class="text-4xl text-[#2B80F6] font-bold mb-5 text-center">Connexion Administrateur</h2>
-                <p class="text-sm text-gray-600 text-center">Accédez à votre tableau de bord sécurisé.</p>
+                <h2 class="text-2xl font-semibold text-gray-900">Connexion Administrateur</h2>
+                <p class="text-sm text-gray-600">Accédez à votre tableau de bord sécurisé.</p>
             </div>
 
             <?php if (!empty($error)) echo "<div class='rounded-lg border border-red-200 bg-red-50 text-red-700 text-sm p-3'>" . htmlspecialchars($error) . "</div>"; ?>
@@ -100,7 +107,6 @@ try {
             <p class="text-xs text-gray-500 text-center">Par défaut: <span class="font-medium">admin@lekol.local</span> / <span class="font-medium">Admin123!</span></p>
         </form>
     </div>
-
 
     <script src="Scripts/tailwindcss.js"></script>
 </body>

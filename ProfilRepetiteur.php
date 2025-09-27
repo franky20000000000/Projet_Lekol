@@ -88,7 +88,7 @@ if (isset($_POST['update']) || (!empty($_FILES['photo']['name']) && $_FILES['pho
     $experience = $_POST['experience'] ?? ($repetiteur['experience'] ?? null);
 
     // Upload photo (optionnel)
-    $photoPath = $repetiteur['piece_identite'] ?? null;
+    $photoPath = $repetiteur['photo_profil'] ?? null;
     if (!empty($_FILES['photo']['name']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
         $allowed = ['image/jpeg','image/png','image/webp'];
         if (in_array($_FILES['photo']['type'], $allowed)) {
@@ -101,9 +101,9 @@ if (isset($_POST['update']) || (!empty($_FILES['photo']['name']) && $_FILES['pho
         }
     }
 
-    // Mise à jour dans la base de données (avec piece_identite & experience)
+    // Mise à jour dans la base de données (avec photo_profil & experience)
     $sql_update = "UPDATE repetiteur SET nom=?, prenom=?, email=?, telephone=?, ville=?, quartier=?, 
-                  niveau_etudes=?, universite=?, filiere=?, matieres=?, niveau_cible=?, zones=?, description=?, experience=?, piece_identite=? 
+                  niveau_etudes=?, universite=?, filiere=?, matieres=?, niveau_cible=?, zones=?, description=?, experience=?, photo_profil=? 
                   WHERE id=?";
     $stmt_update = $pdo->prepare($sql_update);
     $ok = $stmt_update->execute([
@@ -264,9 +264,9 @@ if (isset($_GET['deconnexion'])) {
                     <div class="bg-white rounded-xl shadow-lg p-6 sticky top-24">
                         <div class="flex flex-col items-center mb-6">
                             <div class="relative mb-4">
-                                <?php if (!empty($repetiteur['piece_identite'])): ?>
+                                <?php if (!empty($repetiteur['photo_profil'])): ?>
                                     <?php 
-                                        $imgPath = $repetiteur['piece_identite'];
+                                        $imgPath = $repetiteur['photo_profil'];
                                         $ver = (is_file($imgPath) ? @filemtime($imgPath) : time());
                                     ?>
                                     <img src="<?php echo htmlspecialchars($imgPath . '?v=' . $ver); ?>" 
@@ -326,6 +326,14 @@ if (isset($_GET['deconnexion'])) {
                                     <?php echo htmlspecialchars($repetiteur['ville'] . ', ' . $repetiteur['quartier']); ?>
                                 </p>
                             </div>
+
+                            <button class="w-full py-3 bg-[#2B80F6] text-white font-semibold rounded-lg hover:bg-blue-700 transition flex items-center justify-center">
+                                <i class="fas fa-phone-alt mr-2"></i> Appeler ce répétiteur
+                            </button>
+
+                            <button class="w-full py-3 bg-[#2B80F6] text-white font-semibold rounded-lg hover:bg-blue-700 transition flex items-center justify-center">
+                                <i class="fas fa-comment-dots mr-2"></i> Envoyer un message
+                            </button>
                         </div>
                     </div>
                 </div>

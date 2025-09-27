@@ -15,9 +15,10 @@ session_start();
 
 
 if (isset($_POST['ok'])) {
+    
     // Récupérer les champs texte
     $email = $_POST['email'];
-    $mot_de_passe = password_hash($_POST['motDePasse'], PASSWORD_BCRYPT);
+    $mot_de_passe = $_POST['motDePasse']; // Ne pas hasher maintenant
     $nom = $_POST['nom'];
     $prenom = $_POST['prenom'];
     $telephone = $_POST['telephone'];
@@ -51,29 +52,32 @@ if (isset($_POST['ok'])) {
     $releve = uploadFile("releve", $uploads_dir);
     $preuve = uploadFile("preuve", $uploads_dir);
 
-    // Insertion BDD
-    $sql = "INSERT INTO repetiteur (email, motDePasse, nom, prenom, telephone, ville, quartier, date_naissance, 
-            niveau_etudes, universite, filiere, matieres, niveau_cible, zones, description, 
-            piece_identite, certificat_scolarite, releve_bac, preuve_experience) 
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    // Stocker les données en session pour le récapitulatif
+    $_SESSION['recapitulatif_data'] = [
+        'email' => $email,
+        'motDePasse' => $mot_de_passe,
+        'nom' => $nom,
+        'prenom' => $prenom,
+        'telephone' => $telephone,
+        'ville' => $ville,
+        'quartier' => $quartier,
+        'dateNaissance' => $dateNaissance,
+        'niveau' => $niveau,
+        'universite' => $universite,
+        'filiere' => $filiere,
+        'matiere' => $matiere,
+        'niveauCible' => $niveauCible,
+        'zone' => $zone,
+        'description' => $description,
+        'identite' => $identite,
+        'certificat' => $certificat,
+        'releve' => $releve,
+        'preuve' => $preuve
+    ];
 
-    $stmt = $pdo->prepare($sql);
-    $ok = $stmt->execute([
-        $email, $mot_de_passe, $nom, $prenom, $telephone, $ville, $quartier, $dateNaissance,
-        $niveau, $universite, $filiere, $matiere, $niveauCible, $zone, $description,
-        $identite, $certificat, $releve, $preuve
-    ]);
-
-    if ($ok) {
-        $_SESSION['id'] = $pdo->lastInsertId();
-        $_SESSION['nom'] = $nom;
-        $_SESSION['prenom'] = $prenom;
-        $_SESSION['type_utilisateur'] = 'repetiteur';
-        header("Location: index2.php");
-        exit;
-    } else {
-        echo "Erreur lors de l'inscription.";
-    }
+    // Rediriger vers la page de récapitulatif finale
+    header("Location: RecapitulatifInscription_final.php");
+    exit;
 }
 ?>
 
@@ -87,7 +91,7 @@ if (isset($_POST['ok'])) {
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="flex justify-center items-center">
-    <form method="post" action="" class="flex shadow-lg flex-col gap-5 my-10 h-auto w-auto p-10 rounded-xl px-4 mx-4" id="inscriptionForm" onsubmit="return validateForm()">
+    <form method="post" action="" enctype="multipart/form-data" class="flex shadow-lg flex-col gap-5 my-10 h-auto w-auto p-10 rounded-xl px-4 mx-4" id="inscriptionForm" onsubmit="return validateForm()">
         <h1 class="text-6xl text-[#2B80F6] font-bold mb-5">Inscription</h1>
 
         <div class="flex flex-col gap-5 mb-5">

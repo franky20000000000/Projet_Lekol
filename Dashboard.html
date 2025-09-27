@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="Dashboard.css">
+    <title>Dashboard</title>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-[#2B80F6] text-white min-h-screen">
+            <div class="p-6">
+                <div class="flex items-center space-x-3 mb-8">
+                    <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center">
+                        <span class="text-[#2B80F6] font-bold text-xl">L</span>
+                    </div>
+                    <span class="text-xl font-bold">Admin Lekol</span>
+                </div>
+                
+                <nav class="space-y-2">
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg bg-white bg-opacity-20">
+                        <i class="fas fa-tachometer-alt w-5"></i>
+                        <span>Tableau de bord</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+                        <i class="fas fa-users w-5"></i>
+                        <span>Utilisateurs</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+                        <i class="fas fa-graduation-cap w-5"></i>
+                        <span>Répétiteurs</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+                        <i class="fas fa-file-alt w-5"></i>
+                        <span>Épreuves</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+                        <i class="fas fa-star w-5"></i>
+                        <span>Avis</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+                        <i class="fas fa-credit-card w-5"></i>
+                        <span>Abonnements</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+                        <i class="fas fa-cog w-5"></i>
+                        <span>Paramètres</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1">
+            <!-- Header -->
+            <header class="bg-white shadow-sm">
+                <div class="flex justify-between items-center px-6 py-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Tableau de bord Administrateur</h1>
+                        <p class="text-gray-600">Bienvenue, Admin</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition">
+                            <i class="fas fa-bell text-gray-600"></i>
+                        </button>
+                        <div class="w-10 h-10 rounded-full bg-[#2B80F6] flex items-center justify-center text-white font-medium">
+                            A
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Stats -->
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-600">Utilisateurs</p>
+                            <h2 class="text-3xl font-bold text-gray-800">1,248</h2>
+                        </div>
+                        <div class="p-3 rounded-lg bg-blue-100 text-[#2B80F6]">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <p class="text-sm text-green-600 mt-2"><i class="fas fa-arrow-up"></i> 12% ce mois</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-600">Répétiteurs</p>
+                            <h2 class="text-3xl font-bold text-gray-800">356</h2>
+                        </div>
+                        <div class="p-3 rounded-lg bg-green-100 text-green-600">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                    </div>
+                    <p class="text-sm text-green-600 mt-2"><i class="fas fa-arrow-up"></i> 8% ce mois</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-600">En attente</p>
+                            <h2 class="text-3xl font-bold text-gray-800">24</h2>
+                        </div>
+                        <div class="p-3 rounded-lg bg-yellow-100 text-yellow-600">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <p class="text-sm text-red-600 mt-2"><i class="fas fa-arrow-down"></i> 3% ce mois</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-600">Revenus</p>
+                            <h2 class="text-3xl font-bold text-gray-800">856k FCFA</h2>
+                        </div>
+                        <div class="p-3 rounded-lg bg-purple-100 text-purple-600">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                    </div>
+                    <p class="text-sm text-green-600 mt-2"><i class="fas fa-arrow-up"></i> 22% ce mois</p>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Répétiteurs en attente -->
+                <div class="bg-white rounded-xl shadow">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-lg font-semibold text-gray-800">Répétiteurs en attente de validation</h2>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                                    <span class="text-gray-600 font-medium">EK</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-gray-800">Eric Kouam</h3>
+                                    <p class="text-sm text-gray-600">Mathématiques, Physique</p>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="px-3 py-1 bg-green-100 text-green-800 rounded-lg text-sm hover:bg-green-200 transition">Valider</button>
+                                <button class="px-3 py-1 bg-red-100 text-red-800 rounded-lg text-sm hover:bg-red-200 transition">Refuser</button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                                    <span class="text-gray-600 font-medium">AD</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-gray-800">Amélie Djemo</h3>
+                                    <p class="text-sm text-gray-600">Français, Anglais</p>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="px-3 py-1 bg-green-100 text-green-800 rounded-lg text-sm hover:bg-green-200 transition">Valider</button>
+                                <button class="px-3 py-1 bg-red-100 text-red-800 rounded-lg text-sm hover:bg-red-200 transition">Refuser</button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                                    <span class="text-gray-600 font-medium">MN</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-gray-800">Michel Ngan</h3>
+                                    <p class="text-sm text-gray-600">SVT, Chimie</p>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="px-3 py-1 bg-green-100 text-green-800 rounded-lg text-sm hover:bg-green-200 transition">Valider</button>
+                                <button class="px-3 py-1 bg-red-100 text-red-800 rounded-lg text-sm hover:bg-red-200 transition">Refuser</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gestion des épreuves -->
+                <div class="bg-white rounded-xl shadow">
+                    <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-gray-800">Gestion des épreuves</h2>
+                        <button class="px-4 py-2 bg-[#2B80F6] text-white rounded-lg hover:bg-[#1a6ad8] transition">
+                            <i class="fas fa-plus mr-2"></i>Ajouter
+                        </button>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <h3 class="font-medium text-gray-800">Mathématiques - Terminale C</h3>
+                                <p class="text-sm text-gray-600">Ajouté le 12/05/2023</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="p-2 text-red-600 hover:bg-red-50 rounded-lg">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <h3 class="font-medium text-gray-800">Philosophie - Terminale A</h3>
+                                <p class="text-sm text-gray-600">Ajouté le 10/05/2023</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="p-2 text-red-600 hover:bg-red-50 rounded-lg">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <h3 class="font-medium text-gray-800">Physique - Première D</h3>
+                                <p class="text-sm text-gray-600">Ajouté le 08/05/2023</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="p-2 text-red-600 hover:bg-red-50 rounded-lg">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modération des avis -->
+                <div class="bg-white rounded-xl shadow">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-lg font-semibold text-gray-800">Modération des avis</h2>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div class="p-4 border border-gray-200 rounded-lg">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h3 class="font-medium text-gray-800">Marie T. sur Jean K.</h3>
+                                    <div class="flex items-center mt-1">
+                                        <div class="text-yellow-400">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star-half-alt"></i>
+                                        </div>
+                                        <span class="ml-2 text-sm text-gray-600">4.5/5</span>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">En attente</span>
+                            </div>
+                            <p class="text-gray-700">Jean est un excellent professeur, très patient et compétent. Mon fils a progressé rapidement en mathématiques grâce à lui.</p>
+                            <div class="flex space-x-2 mt-3">
+                                <button class="px-3 py-1 bg-green-100 text-green-800 rounded-lg text-sm hover:bg-green-200 transition">Approuver</button>
+                                <button class="px-3 py-1 bg-red-100 text-red-800 rounded-lg text-sm hover:bg-red-200 transition">Rejeter</button>
+                            </div>
+                        </div>
+
+                        <div class="p-4 border border-gray-200 rounded-lg">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h3 class="font-medium text-gray-800">Paul D. sur Alice M.</h3>
+                                    <div class="flex items-center mt-1">
+                                        <div class="text-yellow-400">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="ml-2 text-sm text-gray-600">5/5</span>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">En attente</span>
+                            </div>
+                            <p class="text-gray-700">Alice est une super prof de français. Elle explique très bien et sait s'adapter au niveau de l'élève.</p>
+                            <div class="flex space-x-2 mt-3">
+                                <button class="px-3 py-1 bg-green-100 text-green-800 rounded-lg text-sm hover:bg-green-200 transition">Approuver</button>
+                                <button class="px-3 py-1 bg-red-100 text-red-800 rounded-lg text-sm hover:bg-red-200 transition">Rejeter</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gestion des abonnements -->
+                <div class="bg-white rounded-xl shadow">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-lg font-semibold text-gray-800">Abonnements et Paiements</h2>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <h3 class="font-medium text-gray-800">Jean Paul</h3>
+                                <p class="text-sm text-gray-600">Abonnement Premium - 10 000 FCFA/mois</p>
+                            </div>
+                            <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">Payé</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <h3 class="font-medium text-gray-800">Marie Lou</h3>
+                                <p class="text-sm text-gray-600">Abonnement Standard - 5 000 FCFA/mois</p>
+                            </div>
+                            <span class="px-3 py-1 bg-red-100 text-red-800 text-sm rounded-full">En retard</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <h3 class="font-medium text-gray-800">Pierre D.</h3>
+                                <p class="text-sm text-gray-600">Abonnement Premium - 10 000 FCFA/mois</p>
+                            </div>
+                            <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">Payé</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <h3 class="font-medium text-gray-800">Sophie M.</h3>
+                                <p class="text-sm text-gray-600">Abonnement Standard - 5 000 FCFA/mois</p>
+                            </div>
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm rounded-full">En attente</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="Scripts/script.js"></script>
+    <script src="Scripts/tailwindcss.js"></script>
+    <script src="Scripts/Dashboard.js"></script>
+</body>
+</html>

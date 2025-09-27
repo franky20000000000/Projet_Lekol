@@ -118,11 +118,11 @@ $repetiteurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
         
         <div id="mobilenav" class="md:hidden  flex flex-col gap-5  absolute top-[4.3rem] right-0 bg-white p-5 rounded-lg shadow-lg transition-all duration-[1s] scale-0 transform origin-top-right">
-            <a class="transition-all duration-300 ease-in-out" href="index.php">Accueil</a>
-            <a class="transition-all duration-300 ease-in-out" href="About.php">A Propos</a>
-            <a class="transition-all duration-300 ease-in-out active" href="Repetiteurs.php">Répétiteurs</a>
-            <a class="transition-all duration-300 ease-in-out" href="AnciensSujets.php">Anciens sujets</a>
-            <a class="transition-all duration-300 ease-in-out" href="Contact.php">Contact</a>
+            <a class="transition-all duration-300 ease-in-out" href="index.html">Accueil</a>
+            <a class="transition-all duration-300 ease-in-out" href="About.html">A Propos</a>
+            <a class="transition-all duration-300 ease-in-out active" href="Repetiteurs.html">Répétiteurs</a>
+            <a class="transition-all duration-300 ease-in-out" href="AnciensSujets.html">Anciens sujets</a>
+            <a class="transition-all duration-300 ease-in-out" href="Contact.html">Contact</a>
         </div>
 
     </header>
@@ -142,22 +142,27 @@ $repetiteurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <label for="filter-matiere" class="block text-sm font-medium text-gray-700 mb-1">Matière</label>
                         <select id="filter-matiere" name="matiere" class="px-4 py-2 w-full border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2B80F6]">
                             <option value="">Toutes les matières</option>
-                            <option value="maths" <?php echo $matiere==='maths'?'selected':''; ?>>Mathématiques</option>
+                            <option value="mathematiques" <?php echo $matiere==='mathematiques'?'selected':''; ?>>Mathématiques</option>
                             <option value="physique" <?php echo $matiere==='physique'?'selected':''; ?>>Physique</option>
                             <option value="chimie" <?php echo $matiere==='chimie'?'selected':''; ?>>Chimie</option>
-                            <option value="francais" <?php echo $matiere==='francais'?'selected':''; ?>>Français</option>
+                            <option value="svt" <?php echo $matiere==='svt'?'selected':''; ?>>SVT</option>
+                            <option value="informatique" <?php echo $matiere==='informatique'?'selected':''; ?>>Informatique</option>
+                            <option value="litterature" <?php echo $matiere==='litterature'?'selected':''; ?>>Littérature</option>
+                            <option value="langues" <?php echo $matiere==='langues'?'selected':''; ?>>Langues</option>
                             <option value="anglais" <?php echo $matiere==='anglais'?'selected':''; ?>>Anglais</option>
+                            <option value="philosophie" <?php echo $matiere==='philosophie'?'selected':''; ?>>Philosophie</option>
                             </select>
                     </div>
 
                     <div>
-                        <label for="filter-niveau" class="block text-sm font-medium text-gray-700 mb-1">Niveau</label>
+                        <label for="filter-niveau" class="block text-sm font-medium text-gray-700 mb-1">Niveau d'études</label>
                         <select id="filter-niveau" name="niveau" class="px-4 py-2 w-full border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2B80F6]">
                             <option value="">Tous les niveaux</option>
-                            <option value="primaire" <?php echo $niveau==='primaire'?'selected':''; ?>>Primaire</option>
-                            <option value="secondaire-1er-cycle" <?php echo $niveau==='secondaire-1er-cycle'?'selected':''; ?>>Secondaire (1er Cycle)</option>
-                            <option value="secondaire-2eme-cycle" <?php echo $niveau==='secondaire-2eme-cycle'?'selected':''; ?>>Secondaire (2ème Cycle)</option>
-                            <option value="superieur" <?php echo $niveau==='superieur'?'selected':''; ?>>Supérieur</option>
+                            <option value="nouveau-bachelier" <?php echo $niveau==='nouveau-bachelier'?'selected':''; ?>>Nouveau bachelier</option>
+                            <option value="etudiant-bts" <?php echo $niveau==='etudiant-bts'?'selected':''; ?>>Étudiant en cycle BTS</option>
+                            <option value="etudiant-licence" <?php echo $niveau==='etudiant-licence'?'selected':''; ?>>Étudiant en cycle licence</option>
+                            <option value="etudiant-master" <?php echo $niveau==='etudiant-master'?'selected':''; ?>>Étudiant en cycle Master</option>
+                            <option value="autre" <?php echo $niveau==='autre'?'selected':''; ?>>Autre</option>
                         </select>
                     </div>
                     
@@ -183,49 +188,19 @@ $repetiteurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
     <section id="repetiteurs-container" class="pt-[7rem] md:mx-20 mx-5 grid md:grid-cols-2 grid-cols-1 gap-4 top-[8rem] h-auto">
-        <?php if (count($repetiteurs) > 0): ?>
-            <?php foreach ($repetiteurs as $repetiteur): ?>
-         <article class="bg-gray-100 rounded-2xl p-6">
-            <div class="flex items-center gap-4">
-                <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
-                            <?php if (!empty($repetiteur['piece_identite'])): ?>
-                                <img src="<?php echo htmlspecialchars($repetiteur['piece_identite']); ?>" alt="photo profil" class="w-full h-full object-cover">
-                            <?php else: ?>
-                <img src="Images/student-7378903_1920.jpg" alt="photo profil" class="w-full h-full object-cover">
-                            <?php endif; ?>
-                </div>
-                <div class="min-w-0">
-                            <h3 class="text-2xl font-semibold leading-tight"><?php echo htmlspecialchars($repetiteur['prenom'] . ' ' . $repetiteur['nom']); ?></h3>
-                            <p class="text-sm text-gray-600 mt-1"><?php echo htmlspecialchars($repetiteur['matieres']); ?></p>
-                </div>
+        <!-- Les résultats seront chargés dynamiquement via JavaScript -->
+        <div class="col-span-2 text-center py-10">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2B80F6]"></div>
+            <p class="text-gray-500 text-lg mt-2">Chargement des répétiteurs...</p>
             </div>
-                    <p class="text-sm text-gray-700 mt-4"><?php echo htmlspecialchars($repetiteur['description']); ?></p>
-                    <div class="mt-4">
-                        <a href="Connexion.php" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#2B80F6] text-white hover:bg-[#1a6ad8]">
-                            Se connecter pour voir le profil
-                        </a>
-                        <a href="Choix.php" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#2B80F6] text-[#2B80F6] hover:bg-[#2B80F6] hover:text-white ml-2">
-                            Créer un compte
-                        </a>
-            </div>
-            </article>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <div class="col-span-2 text-center py-10">
-                <p class="text-gray-500 text-lg">Aucun répétiteur trouvé avec ces critères de recherche.</p>
-            </div>
-        <?php endif; ?>
     </section>
 
-    <?php if ($total_pages > 1 && $page < $total_pages): ?>
-    <div class="flex justify-center mt-6 mb-6">
-        <a href="Repetiteurs.php?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>" class="bg-[#2B80F6] p-2 px-5 rounded-lg text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-[#2B80F6]-400/50">
-            Voir plus
-        </a>
+    <div class="pagination-container">
+        <!-- La pagination sera gérée dynamiquement via JavaScript -->
     </div>
-    <?php endif; ?>
     
     <script src="Scripts/script.js"></script>
     <script src="Scripts/tailwindcss.js"></script>
+    <script src="Scripts/Recherche.js"></script>
 </body>
 </html>

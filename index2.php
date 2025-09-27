@@ -7,10 +7,28 @@ if(!isset($_SESSION['id'])){
     exit;
 }
 
-// Vérifier si l'utilisateur est connecté
-if(!isset($_SESSION['id'])){
-    header("Location: inscriptionRepetiteur.php");
-    exit;
+// Connexion à la base de données pour récupérer les avis
+$host = "localhost";
+$dbname = "lekol";
+$username = "root";
+$password = "";
+
+$avis = [];
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    // Récupérer les avis approuvés avec les informations des parents
+    $stmt = $pdo->prepare("SELECT a.*, p.nom as parent_nom, p.prenom as parent_prenom 
+                          FROM avis a 
+                          LEFT JOIN parent p ON a.parent_id = p.id 
+                          WHERE a.statut = 'approuve' 
+                          ORDER BY a.date_creation DESC 
+                          LIMIT 5");
+    $stmt->execute();
+    $avis = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    // rester silencieux sur la page d'accueil
 }
 ?>
 
@@ -36,7 +54,7 @@ if(!isset($_SESSION['id'])){
     try {
         $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $pdo->prepare("SELECT id, nom, prenom, matieres, description, piece_identite FROM repetiteur ORDER BY id DESC LIMIT 12");
+        $stmt = $pdo->prepare("SELECT id, nom, prenom, matieres, description, photo_profil FROM repetiteur WHERE statut = 'actif' ORDER BY id DESC LIMIT 12");
         $stmt->execute();
         $repetiteursAccueil = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (Exception $e) {
@@ -186,8 +204,8 @@ if(!isset($_SESSION['id'])){
                 <article class="bg-gray-100 rounded-2xl p-6">
             <div class="flex items-center gap-4">
                 <div class="w-20 h-20 rounded-full bg-pink-200 overflow-hidden flex items-center justify-center">
-                                <?php if (!empty($rep['piece_identite'])) { ?>
-                                    <img src="<?php echo htmlspecialchars($rep['piece_identite']); ?>" alt="photo profil" class="w-full h-full object-cover">
+                                <?php if (!empty($rep['photo_profil'])) { ?>
+                                    <img src="<?php echo htmlspecialchars($rep['photo_profil']); ?>" alt="photo profil" class="w-full h-full object-cover">
                                 <?php } else { ?>
                 <img src="Images/student-7378903_1920.jpg" alt="photo profil" class="w-full h-full object-cover">
                                 <?php } ?>
@@ -262,7 +280,7 @@ if(!isset($_SESSION['id'])){
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <article class="group rounded-2xl p-6 bg-white/70 backdrop-blur shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1" role="article" aria-label="Proximité">
                 <div class="flex items-start gap-4">
-                    <div class="shrink-0 h-12 w-12 rounded-xl bg-purple-50 flex items-center justify-center ring-1 ring-purple-100">
+                    <div class="shrink-0 h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center ring-1 ring-blue-100">
                         <img class="h-6 w-6" src="Images/map-pin.png" alt="Icône Proximité">
                     </div>
                     <div>
@@ -273,7 +291,7 @@ if(!isset($_SESSION['id'])){
             </article>
             <article class="group rounded-2xl p-6 bg-white/70 backdrop-blur shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1" role="article" aria-label="Profils vérifiés">
                 <div class="flex items-start gap-4">
-                    <div class="shrink-0 h-12 w-12 rounded-xl bg-purple-50 flex items-center justify-center ring-1 ring-purple-100">
+                    <div class="shrink-0 h-12 w-12 rounded-xl bg-green-50 flex items-center justify-center ring-1 ring-green-100">
                         <img class="h-6 w-6" src="Images/circle-check.png" alt="Icône Profils vérifiés">
                     </div>
                     <div>
@@ -295,7 +313,7 @@ if(!isset($_SESSION['id'])){
             </article>
             <article class="group rounded-2xl p-6 bg-white/70 backdrop-blur shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1" role="article" aria-label="Anciens sujets">
                 <div class="flex items-start gap-4">
-                    <div class="shrink-0 h-12 w-12 rounded-xl bg-purple-50 flex items-center justify-center ring-1 ring-purple-100">
+                    <div class="shrink-0 h-12 w-12 rounded-xl bg-amber-50 flex items-center justify-center ring-1 ring-amber-100">
                         <img class="h-6 w-6" src="Images/file-text.png" alt="Icône Anciens sujets">
                     </div>
                     <div>
@@ -306,7 +324,7 @@ if(!isset($_SESSION['id'])){
             </article>
             <article class="group rounded-2xl p-6 bg-white/70 backdrop-blur shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1" role="article" aria-label="Avis et évaluations">
                 <div class="flex items-start gap-4">
-                    <div class="shrink-0 h-12 w-12 rounded-xl bg-purple-50 flex items-center justify-center ring-1 ring-purple-100">
+                    <div class="shrink-0 h-12 w-12 rounded-xl bg-yellow-50 flex items-center justify-center ring-1 ring-yellow-100">
                         <img class="h-6 w-6" src="Images/star.png" alt="Icône Avis">
                     </div>
                     <div>
@@ -317,7 +335,7 @@ if(!isset($_SESSION['id'])){
             </article>
             <article class="group rounded-2xl p-6 bg-white/70 backdrop-blur shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1" role="article" aria-label="Revenus">
                 <div class="flex items-start gap-4">
-                    <div class="shrink-0 h-12 w-12 rounded-xl bg-purple-50 flex items-center justify-center ring-1 ring-purple-100">
+                    <div class="shrink-0 h-12 w-12 rounded-xl bg-cyan-50 flex items-center justify-center ring-1 ring-cyan-100">
                         <img class="h-6 w-6" src="Images/map-pin.png" alt="Icône Revenus">
                     </div>
                     <div>
@@ -348,7 +366,7 @@ if(!isset($_SESSION['id'])){
             <p class="text-3xl">Chimie</p>
         </div>
     </div>
-    <button class="relative -top-10 bg-[#2B80F6] p-2 rounded-lg -mt-20 text-white md:mt-20 mt-5 text-xl px-5 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-[#2B80F6]-400/50">Explorer tous les sujets</button>
+    <a href="AnciensSujets2.php"><button class="relative -top-10 bg-[#2B80F6] p-2 rounded-lg -mt-20 text-white md:mt-20 mt-5 text-xl px-5 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-[#2B80F6]-400/50">Explorer tous les sujets</button></a>
 </section>
 
 <!------------------------------- section 7 ------------------------------------------->
@@ -357,123 +375,50 @@ if(!isset($_SESSION['id'])){
     
     <!-- Slides container -->
     <div id="testimonialSlides" class="flex transition-transform duration-500 ease-in-out">
-      
-      <!-- Slide 1 -->
+      <?php if (empty($avis)): ?>
+        <!-- Message par défaut si aucun avis -->
       <div class="min-w-full flex justify-center">
         <div class="bg-white border-gray-400 border shadow-lg rounded-2xl shadow-sm p-6 sm:p-10 w-3xl w-full flex flex-col sm:flex-row items-center gap-6">
           <img src="Images/ai-generated-9010550_1920.png" alt="profile" class="w-24 h-24 rounded-full object-cover">
           <div class="flex-1 text-center sm:text-left">
-            <h3 class="text-xl font-bold">Nickolo Barella</h3>
-            <p class="text-gray-600 mb-4">Parent d'élève</p>
-            <p class="text-gray-800 mb-4">"Grâce à cette plateforme, j'ai trouvé une étudiante sérieuse et compétente pour accompagner ma fille en mathématiques.
- Elle avait de grosses difficultés et refusait même de réviser. Après quelques séances, elle a repris confiance et ses notes
- ont nettement augmenté. J'ai aussi apprécié la possibilité de suivre les séances directement depuis mon compte.
- C'est simple, rassurant, et très efficace !"</p>
+              <h3 class="text-xl font-bold">Aucun avis disponible</h3>
+              <p class="text-gray-600 mb-4">Soyez le premier à laisser un avis !</p>
+              <p class="text-gray-800 mb-4">"Rejoignez notre communauté et partagez votre expérience avec nos répétiteurs qualifiés."</p>
             <!-- Stars -->
             <div class="flex justify-center sm:justify-start">
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-yellow-400 text-2xl">★</span>
+                <span class="text-gray-400 text-2xl">★</span>
+                <span class="text-gray-400 text-2xl">★</span>
+                <span class="text-gray-400 text-2xl">★</span>
               <span class="text-gray-400 text-2xl">★</span>
+              <span class="text-gray-400 text-2xl">★</span>
+            </div>
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- Slide 2 -->
+      <?php else: ?>
+        <?php foreach ($avis as $index => $avi): ?>
       <div class="min-w-full flex justify-center">
         <div class="bg-white border-gray-400 border shadow-lg rounded-2xl shadow-sm p-6 sm:p-10 w-3xl w-full flex flex-col sm:flex-row items-center gap-6">
           <img src="Images/ai-generated-9010550_1920.png" alt="profile" class="w-24 h-24 rounded-full object-cover">
           <div class="flex-1 text-center sm:text-left">
-            <h3 class="text-xl font-bold">Nickolo Barella</h3>
-            <p class="text-gray-600 mb-4">Parent d'élève</p>
-            <p class="text-gray-800 mb-4">"Grâce à cette plateforme, j'ai trouvé une étudiante sérieuse et compétente pour accompagner ma fille en mathématiques.
- Elle avait de grosses difficultés et refusait même de réviser. Après quelques séances, elle a repris confiance et ses notes
- ont nettement augmenté. J'ai aussi apprécié la possibilité de suivre les séances directement depuis mon compte.
- C'est simple, rassurant, et très efficace !"</p>
-            <!-- Stars -->
+                <h3 class="text-xl font-bold"><?php echo htmlspecialchars(($avi['parent_prenom'] ?? 'Parent') . ' ' . ($avi['parent_nom'] ?? 'Anonyme')); ?></h3>
+                <p class="text-gray-600 mb-4">Parent d'élève</p>
+                <p class="text-gray-800 mb-4">"<?php echo htmlspecialchars($avi['commentaire']); ?>"</p>
+                <!-- Stars dynamiques -->
             <div class="flex justify-center sm:justify-start">
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-gray-400 text-2xl">★</span>
-            </div>
-          </div>
+                  <?php 
+                  $note = (int)$avi['note'];
+                  for ($i = 1; $i <= 5; $i++): 
+                    $starClass = $i <= $note ? 'text-yellow-400' : 'text-gray-400';
+                  ?>
+                    <span class="<?php echo $starClass; ?> text-2xl">★</span>
+                  <?php endfor; ?>
         </div>
       </div>
-
-      <!-- Slide 3 -->
-      <div class="min-w-full flex justify-center">
-        <div class="bg-white border-gray-400 border shadow-lg rounded-2xl shadow-sm p-6 sm:p-10 w-3xl w-full flex flex-col sm:flex-row items-center gap-6">
-          <img src="Images/ai-generated-9010550_1920.png" alt="profile" class="w-24 h-24 rounded-full object-cover">
-          <div class="flex-1 text-center sm:text-left">
-            <h3 class="text-xl font-bold">Nickolo Barella</h3>
-            <p class="text-gray-600 mb-4">Parent d'élève</p>
-            <p class="text-gray-800 mb-4">"Grâce à cette plateforme, j'ai trouvé une étudiante sérieuse et compétente pour accompagner ma fille en mathématiques.
- Elle avait de grosses difficultés et refusait même de réviser. Après quelques séances, elle a repris confiance et ses notes
- ont nettement augmenté. J'ai aussi apprécié la possibilité de suivre les séances directement depuis mon compte.
- C'est simple, rassurant, et très efficace !"</p>
-            <!-- Stars -->
-            <div class="flex justify-center sm:justify-start">
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-gray-400 text-2xl">★</span>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- Slide 4 -->
-      <div class="min-w-full flex justify-center">
-        <div class="bg-white border-gray-400 border shadow-lg rounded-2xl shadow-sm p-6 sm:p-10 w-3xl w-full flex flex-col sm:flex-row items-center gap-6">
-          <img src="Images/ai-generated-9010550_1920.png" alt="profile" class="w-24 h-24 rounded-full object-cover">
-          <div class="flex-1 text-center sm:text-left">
-            <h3 class="text-xl font-bold">Nickolo Barella</h3>
-            <p class="text-gray-600 mb-4">Parent d'élève</p>
-            <p class="text-gray-800 mb-4">"Grâce à cette plateforme, j'ai trouvé une étudiante sérieuse et compétente pour accompagner ma fille en mathématiques.
- Elle avait de grosses difficultés et refusait même de réviser. Après quelques séances, elle a repris confiance et ses notes
- ont nettement augmenté. J'ai aussi apprécié la possibilité de suivre les séances directement depuis mon compte.
- C'est simple, rassurant, et très efficace !"</p>
-            <!-- Stars -->
-            <div class="flex justify-center sm:justify-start">
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-gray-400 text-2xl">★</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide 5 -->
-      <div class="min-w-full flex justify-center">
-        <div class="bg-white border-gray-400 border shadow-lg rounded-2xl shadow-sm p-6 sm:p-10 w-3xl w-full flex flex-col sm:flex-row items-center gap-6">
-          <img src="Images/ai-generated-9010550_1920.png" alt="profile" class="w-24 h-24 rounded-full object-cover">
-          <div class="flex-1 text-center sm:text-left">
-            <h3 class="text-xl font-bold">Nickolo Barella</h3>
-            <p class="text-gray-600 mb-4">Parent d'élève</p>
-            <p class="text-gray-800 mb-4">"Grâce à cette plateforme, j'ai trouvé une étudiante sérieuse et compétente pour accompagner ma fille en mathématiques.
- Elle avait de grosses difficultés et refusait même de réviser. Après quelques séances, elle a repris confiance et ses notes
- ont nettement augmenté. J'ai aussi apprécié la possibilité de suivre les séances directement depuis mon compte.
- C'est simple, rassurant, et très efficace !"</p>
-            <!-- Stars -->
-            <div class="flex justify-center sm:justify-start">
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-yellow-400 text-2xl">★</span>
-              <span class="text-gray-400 text-2xl">★</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    
+        <?php endforeach; ?>
+      <?php endif; ?>
 
     </div>
 
@@ -524,23 +469,23 @@ if(!isset($_SESSION['id'])){
                         Liens rapides
                     </h3>
                     <div class="space-y-4">
-                        <a href="#" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
+                        <a href="index2.php" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
                             <i class="fas fa-home text-blue-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
                             <span class="group-hover:font-semibold">Accueil</span>
                         </a>
-                        <a href="#" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
+                        <a href="About2.php" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
                             <i class="fas fa-info-circle text-blue-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
                             <span class="group-hover:font-semibold">À propos</span>
                         </a>
-                        <a href="#" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
+                        <a href="Repetiteurs2.php" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
                             <i class="fas fa-chalkboard-teacher text-blue-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
                             <span class="group-hover:font-semibold">Répétiteurs</span>
                         </a>
-                        <a href="#" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
+                        <a href="AnciensSujets2.php" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
                             <i class="fas fa-file-alt text-blue-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
                             <span class="group-hover:font-semibold">Anciens sujets</span>
                         </a>
-                        <a href="#" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
+                        <a href="Contact2.php" class="group flex items-center justify-center lg:justify-start space-x-3 text-slate-300 hover:text-white transition-all duration-300 transform hover:translate-x-2">
                             <i class="fas fa-envelope text-blue-400 group-hover:text-cyan-300 transition-colors duration-300"></i>
                             <span class="group-hover:font-semibold">Contact</span>
                         </a>

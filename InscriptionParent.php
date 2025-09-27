@@ -13,7 +13,6 @@ try {
 }
 
 $erreur = "";
-
 if(isset($_POST['ok'])){
     $nom = trim($_POST['nom']);
     $prenom = trim($_POST['prenom']);

@@ -3,13 +3,6 @@ session_start();
 
 header('Content-Type: application/json; charset=utf-8');
 
-// Protection: uniquement pour admin connecté
-if (!isset($_SESSION['admin_id'])) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'Non autorisé']);
-    exit;
-}
-
 // Connexion BD
 $host = 'localhost';
 $dbname = 'lekol';
@@ -50,6 +43,16 @@ if ($input) {
     }
 }
 
+// Actions publiques (accessibles sans connexion)
+$public_actions = ['search_repetiteurs'];
+
+// Vérification admin uniquement pour les actions non publiques
+if (!in_array($action, $public_actions) && !isset($_SESSION['admin_id'])) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'Non autorisé']);
+    exit;
+}
+
 switch ($action) {
     // Tableau de bord: stats simples
     case 'get_stats': {
@@ -65,18 +68,18 @@ switch ($action) {
     case 'list_repetiteurs': {
         $search = isset($_GET['search']) ? trim($_GET['search']) : '';
         $statut = isset($_GET['statut']) ? trim($_GET['statut']) : '';
-        // Certaines colonnes peuvent ne pas exister selon votre schéma; on filtre côté application si absent
-        $sql = 'SELECT id, nom, prenom, email, telephone, ville, niveau_cible, matieres FROM repetiteur';
+        $sql = 'SELECT id, nom, prenom, email, telephone, ville, niveau_cible, matieres, statut, 
+                       piece_identite, certificat_scolarite, releve_bac, preuve_experience 
+                FROM repetiteur';
         $where = [];
         $params = [];
         if ($search !== '') {
             $where[] = '(nom LIKE :q OR prenom LIKE :q OR email LIKE :q)';
             $params[':q'] = "%$search%";
         }
-        // Exemple de colonne statut si vous l’ajoutez plus tard
         if ($statut !== '' && $statut !== 'tous') {
-            // $where[] = 'statut = :statut';
-            // $params[':statut'] = $statut;
+            $where[] = 'statut = :statut';
+            $params[':statut'] = $statut;
         }
         if ($where) {
             $sql .= ' WHERE ' . implode(' AND ', $where);
@@ -87,6 +90,25 @@ switch ($action) {
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         json_ok(['items' => $rows]);
+    }
+
+    // Détails d'un répétiteur avec documents
+    case 'get_repetiteur_details': {
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if ($id <= 0) json_err('ID invalide');
+        
+        $sql = 'SELECT id, nom, prenom, email, telephone, ville, quartier, date_naissance, 
+                       niveau_etudes, universite, filiere, matieres, niveau_cible, zones, description,
+                       piece_identite, certificat_scolarite, releve_bac, preuve_experience, statut
+                FROM repetiteur WHERE id = :id';
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $repetiteur = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$repetiteur) json_err('Répétiteur non trouvé', 404);
+        
+        json_ok(['repetiteur' => $repetiteur]);
     }
 
     // Activités récentes (agrégées depuis plusieurs tables)
@@ -144,15 +166,15 @@ switch ($action) {
         json_ok(['items' => $activities]);
     }
 
-    // Répétiteurs: mise à jour statut (placeholder si la colonne n’existe pas encore)
+    // Répétiteurs: mise à jour statut
     case 'update_repetiteur_statut': {
         $id = (int)($json['id'] ?? $_POST['id'] ?? 0);
         $statut = trim($json['statut'] ?? $_POST['statut'] ?? '');
         if ($id <= 0 || $statut === '') json_err('Paramètres invalides');
-        // Si vous avez une colonne statut dans la table repetiteur, décommentez la ligne suivante:
-        // $stmt = $pdo->prepare('UPDATE repetiteur SET statut = :statut WHERE id = :id');
-        // $stmt->execute([':statut' => $statut, ':id' => $id]);
-        json_ok([], 'Statut mis à jour (simulation si colonne absente)');
+        
+        $stmt = $pdo->prepare('UPDATE repetiteur SET statut = :statut WHERE id = :id');
+        $stmt->execute([':statut' => $statut, ':id' => $id]);
+        json_ok([], 'Statut mis à jour avec succès');
     }
 
     // Répétiteurs: suppression
@@ -205,9 +227,75 @@ switch ($action) {
         json_ok([], 'Statut de l\'avis mis à jour');
     }
 
+    // Recherche répétiteurs (public - accessible sans session)
+    case 'search_repetiteurs': {
+        $search = trim($_GET['search'] ?? '');
+        $matiere = trim($_GET['matiere'] ?? '');
+        $niveau = trim($_GET['niveau'] ?? '');
+        $ville = trim($_GET['ville'] ?? '');
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+        
+        $sql = "SELECT id, nom, prenom, matieres, niveau_cible, ville, description, photo_profil 
+                FROM repetiteur 
+                WHERE statut = 'actif'";
+        $count_sql = "SELECT COUNT(*) as total FROM repetiteur WHERE statut = 'actif'";
+        $params = [];
+        
+        if (!empty($search)) {
+            $sql .= " AND (nom LIKE :search OR prenom LIKE :search OR matieres LIKE :search)";
+            $count_sql .= " AND (nom LIKE :search OR prenom LIKE :search OR matieres LIKE :search)";
+            $params[':search'] = '%' . $search . '%';
+        }
+        if (!empty($matiere)) {
+            $sql .= " AND matieres LIKE :matiere";
+            $count_sql .= " AND matieres LIKE :matiere";
+            $params[':matiere'] = '%' . $matiere . '%';
+        }
+        if (!empty($niveau)) {
+            $sql .= " AND niveau_cible LIKE :niveau";
+            $count_sql .= " AND niveau_cible LIKE :niveau";
+            $params[':niveau'] = '%' . $niveau . '%';
+        }
+        if (!empty($ville)) {
+            $sql .= " AND ville LIKE :ville";
+            $count_sql .= " AND ville LIKE :ville";
+            $params[':ville'] = '%' . $ville . '%';
+        }
+        
+        $sql .= " ORDER BY nom, prenom LIMIT :limit OFFSET :offset";
+        
+        // Calcul du total
+        $stmt_count = $pdo->prepare($count_sql);
+        foreach ($params as $key => $value) {
+            $stmt_count->bindValue($key, $value, PDO::PARAM_STR);
+        }
+        $stmt_count->execute();
+        $total_result = $stmt_count->fetch(PDO::FETCH_ASSOC);
+        $total = (int)($total_result['total'] ?? 0);
+        
+        // Récupération des résultats
+        $stmt = $pdo->prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, PDO::PARAM_STR);
+        }
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $repetiteurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $total_pages = $total > 0 ? max(1, (int)ceil($total / $limit)) : 0;
+        
+        json_ok([
+            'repetiteurs' => $repetiteurs,
+            'total' => $total,
+            'page' => $page,
+            'total_pages' => $total_pages
+        ]);
+    }
+
     default:
         json_err('Action inconnue', 404);
 }
-
 ?>
-

@@ -184,8 +184,8 @@ const Repetiteurs = {
                 (repetiteur.nom && repetiteur.nom.toLowerCase().includes(search)) ||
                 (repetiteur.prenom && repetiteur.prenom.toLowerCase().includes(search)) ||
                 (repetiteur.email && repetiteur.email.toLowerCase().includes(search));
-            // statut placeholder (si vous ajoutez la colonne côté BD)
-            const matchesStatut = this.currentFilter.statut === 'tous' || true;
+            const matchesStatut = this.currentFilter.statut === 'tous' || 
+                (repetiteur.statut && repetiteur.statut === this.currentFilter.statut);
             return matchesSearch && matchesStatut;
         });
         this.renderTable();
@@ -217,8 +217,8 @@ const Repetiteurs = {
                     </div>
                 </td>
                 <td class="py-4 px-4">
-                    <span class="px-2 py-1 text-xs rounded-full ${this.getStatutClass(repetiteur.statut)}">
-                        ${repetiteur.statut}
+                    <span class="px-2 py-1 text-xs rounded-full ${this.getStatutClass(repetiteur.statut || 'actif')}">
+                        ${repetiteur.statut || 'actif'}
                     </span>
                 </td>
                 <td class="py-4 px-4">
@@ -234,26 +234,33 @@ const Repetiteurs = {
                 </td>
                 <td class="py-4 px-4">
                     <div class="flex items-center space-x-2">
-                        <button onclick="Repetiteurs.showDetailModal(${repetiteur.id})" 
-                                class="p-2 text-gray-600 hover:text-primary transition-colors" 
-                                title="Voir détails">
-                            <i class="fas fa-eye"></i>
-                        </button>
+                <button onclick="Repetiteurs.showDetailModal(${repetiteur.id})" 
+                        class="p-2 text-gray-600 hover:text-primary transition-colors" 
+                        title="Voir détails">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button onclick="Repetiteurs.showDocumentsModal(${repetiteur.id})" 
+                        class="p-2 text-blue-600 hover:text-blue-700 transition-colors" 
+                        title="Voir documents">
+                    <i class="fas fa-file-alt"></i>
+                </button>
                         <button onclick="Repetiteurs.showEditModal(${repetiteur.id})" 
                                 class="p-2 text-gray-600 hover:text-primary transition-colors" 
                                 title="Modifier">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button onclick="Repetiteurs.toggleStatus(${repetiteur.id}, 'actif')" 
-                                class="p-2 text-green-600 hover:text-green-700 transition-colors" 
-                                title="Valider">
-                            <i class="fas fa-check-circle"></i>
-                        </button>
-                        <button onclick="Repetiteurs.toggleStatus(${repetiteur.id}, 'suspendu')" 
-                                class="p-2 text-red-600 hover:text-red-700 transition-colors" 
-                                title="Suspendre">
-                            <i class="fas fa-times-circle"></i>
-                        </button>
+                        ${(repetiteur.statut || 'actif') === 'suspendu' ? 
+                            `<button onclick="Repetiteurs.toggleStatus(${repetiteur.id}, 'actif')" 
+                                    class="p-2 text-green-600 hover:text-green-700 transition-colors" 
+                                    title="Réactiver">
+                                <i class="fas fa-check-circle"></i>
+                            </button>` :
+                            `<button onclick="Repetiteurs.toggleStatus(${repetiteur.id}, 'suspendu')" 
+                                    class="p-2 text-red-600 hover:text-red-700 transition-colors" 
+                                    title="Suspendre">
+                                <i class="fas fa-times-circle"></i>
+                            </button>`
+                        }
                         <button onclick="Repetiteurs.deleteRepetiteur(${repetiteur.id})" 
                                 class="p-2 text-red-600 hover:text-red-700 transition-colors" 
                                 title="Supprimer">
@@ -464,26 +471,144 @@ const Repetiteurs = {
     },
 
     toggleStatus(id, statut) {
+        const action = statut === 'suspendu' ? 'suspendre' : 'réactiver';
+        if (!confirm(`Êtes-vous sûr de vouloir ${action} ce compte répétiteur ?`)) return;
+        
         apiPost('update_repetiteur_statut', { id, statut }).then(res => {
             if (res && res.success) {
-                showToast(res.message || 'Statut mis à jour');
+                showToast(`Compte ${statut === 'suspendu' ? 'suspendu' : 'réactivé'} avec succès`);
                 this.fetchList();
             } else {
-                showToast((res && res.message) || 'Erreur mise à jour', 'error');
+                showToast((res && res.message) || 'Erreur lors de la mise à jour', 'error');
             }
-        }).catch(()=> showToast('Erreur connexion', 'error'));
+        }).catch(()=> showToast('Erreur de connexion', 'error'));
     },
 
     deleteRepetiteur(id) {
-        if (!confirm('Supprimer ce répétiteur ?')) return;
+        if (!confirm('Êtes-vous sûr de vouloir supprimer définitivement ce compte répétiteur ? Cette action est irréversible.')) return;
         apiPost('delete_repetiteur', { id }).then(res => {
             if (res && res.success) {
-                showToast('Répétiteur supprimé');
+                showToast('Compte répétiteur supprimé définitivement');
                 this.fetchList();
             } else {
-                showToast((res && res.message) || 'Erreur suppression', 'error');
+                showToast((res && res.message) || 'Erreur lors de la suppression', 'error');
             }
-        }).catch(()=> showToast('Erreur connexion', 'error'));
+        }).catch(()=> showToast('Erreur de connexion', 'error'));
+    },
+
+    // Afficher la modal des documents
+    showDocumentsModal(id) {
+        const repetiteur = this.data.find(r => r.id === id);
+        if (!repetiteur) return;
+
+        // Récupérer les détails complets du répétiteur
+        apiGet(`get_repetiteur_details?id=${id}`).then(res => {
+            if (res && res.success) {
+                const details = res.data.repetiteur;
+                this.renderDocumentsModal(details);
+            } else {
+                showToast('Erreur lors du chargement des documents', 'error');
+            }
+        }).catch(() => showToast('Erreur de connexion', 'error'));
+    },
+
+    renderDocumentsModal(repetiteur) {
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-2xl font-bold text-gray-800">
+                            <i class="fas fa-file-alt mr-2 text-blue-600"></i>
+                            Documents de ${repetiteur.prenom} ${repetiteur.nom}
+                        </h3>
+                        <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        ${this.renderDocumentCard('Pièce d\'identité', repetiteur.piece_identite, 'ID')}
+                        ${this.renderDocumentCard('Certificat de scolarité', repetiteur.certificat_scolarite, 'CERT')}
+                        ${this.renderDocumentCard('Relevé de notes BAC', repetiteur.releve_bac, 'BAC')}
+                        ${this.renderDocumentCard('Preuve d\'expérience', repetiteur.preuve_experience, 'EXP', true)}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+    },
+
+    renderDocumentCard(title, filePath, type, optional = false) {
+        const hasFile = filePath && filePath.trim() !== '';
+        const fileUrl = hasFile ? filePath : null;
+        
+        return `
+            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div class="flex items-center justify-between mb-3">
+                    <h4 class="font-semibold text-gray-800">${title}</h4>
+                    <span class="px-2 py-1 text-xs rounded-full ${hasFile ? 'bg-green-100 text-green-800' : (optional ? 'bg-orange-100 text-orange-800' : 'bg-red-100 text-red-800')}">
+                        ${hasFile ? 'Fourni' : (optional ? 'Optionnel' : 'Manquant')}
+                    </span>
+                </div>
+                
+                ${hasFile ? `
+                    <div class="space-y-2">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-file mr-2"></i>
+                            <span class="truncate">${filePath.split('/').pop()}</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="Repetiteurs.viewDocument('${fileUrl}')" 
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                                <i class="fas fa-eye mr-1"></i>
+                                Voir
+                            </button>
+                            <button onclick="Repetiteurs.downloadDocument('${fileUrl}')" 
+                                    class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                                <i class="fas fa-download mr-1"></i>
+                                Télécharger
+                            </button>
+                        </div>
+                    </div>
+                ` : `
+                    <div class="text-center text-gray-500 py-4">
+                        <i class="fas fa-file-times text-2xl mb-2"></i>
+                        <p class="text-sm">${optional ? 'Document optionnel non fourni' : 'Document manquant'}</p>
+                    </div>
+                `}
+            </div>
+        `;
+    },
+
+    viewDocument(fileUrl) {
+        if (!fileUrl) return;
+        
+        // Ouvrir le document dans un nouvel onglet
+        window.open(fileUrl, '_blank');
+    },
+
+    downloadDocument(fileUrl) {
+        if (!fileUrl) return;
+        
+        // Créer un lien de téléchargement
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        link.download = fileUrl.split('/').pop();
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    },
+    
+    updateCount() {
+        const countElement = document.getElementById('count-repetiteurs');
+        if (countElement) {
+            countElement.textContent = this.filteredData.length;
+        }
     },
     
     // Les autres méthodes existantes (showDetailModal, showEditModal, etc.) restent inchangées
